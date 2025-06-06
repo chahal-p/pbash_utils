@@ -5,5 +5,5 @@ installation_path="$HOME/.local/bin/"
 
 for f in "$@"
 do
-  [ -f "$f" ] && echo "Uninstalling: $f" && rm "${installation_path}${f}" || { echo "Uninstallation failed"; exit 1; }
+  [ -f "${installation_path}${f}" ] && echo "Uninstalling: $f" && rm "${installation_path}${f}" || { echo "Uninstallation failed"; exit 1; }
 done

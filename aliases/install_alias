@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+key=$1
+shift
+
+printf "$@ \"\$@\"" > /tmp/$key
+pinstall /tmp/$key
