@@ -3,9 +3,18 @@
 installation_path="$HOME/.local/bin/"
 [ -d $HOME/.local/bin ] || mkdir -p $HOME/.local/bin
 
+default_bash='#!\/usr\/bin\/env\ bash'
+evaluated_bash="#!"
+evaluated_bash+="$(/usr/bin/env | grep SHELL | tr '=' '\n' | tail -n 1)"
+evaluated_bash="${evaluated_bash//\//\\/}"
+sed_args=()
+[[ "$OSTYPE" == "darwin"* ]] && sed_args+=( "" )
+sed_args+=( "s/$default_bash/$evaluated_bash/1" )
+
 for p in "$@"
 do
   p="$(realpath "$p")"
   bn="$(basename "$p")"
   [ -f "$p" ] && echo "Installing: $bn" && cp "$p" "${installation_path}${bn}" && chmod +x "${installation_path}${bn}" || { echo "Installation failed"; exit 1; }
+  sed -i "${sed_args[@]}" "${installation_path}${bn}"
 done

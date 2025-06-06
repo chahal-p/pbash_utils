@@ -3,5 +3,6 @@
 key=$1
 shift
 
-printf "$@ \"\$@\"" > /tmp/$key
+echo "#!/usr/bin/env bash" > /tmp/$key
+printf "$@ \"\$@\"" >> /tmp/$key
 pinstall /tmp/$key

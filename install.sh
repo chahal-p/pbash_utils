@@ -43,9 +43,6 @@ done
 [ "${#install_input[@]}" == "0" ] && install_input+=( "${default_install_input[@]}" )
 [ "${#install_input[@]}" == "1" ] && [ "${install_input[0]}" == "all" ] && install_input+=( "${default_install_input[@]}" )
 
-installation_path="$HOME/.local/bin/"
-[ -d $HOME/.local/bin ] || mkdir -p $HOME/.local/bin
-
 install=()
 
 while (( ${#install_input[@]} ))
@@ -66,6 +63,6 @@ do
     p="$(realpath "$f")"
     bn="$(basename "$p")"
     [[ "$bn" == "dependencies.txt" || "$bn" == "_complete.sh" ]] && continue
-    [ -f "$p" ] && echo "Installing: $bn" && cp "$p" "${installation_path}${bn}" && chmod +x "${installation_path}${bn}" || { echo "Installation failed"; exit 1; }
+    bash pinstall/pinstall "$p" || exit
   done
 done
