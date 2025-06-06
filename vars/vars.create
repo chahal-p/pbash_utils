@@ -22,11 +22,11 @@ for var in ${vars[@]}; do
   echo "#!/usr/bin/env bash" > "/tmp/$var_setter"
   echo "echo "\$1" > $data_path/vars.${var}" >> "/tmp/$var_setter"
   echo "echo \'\$1\' is set in ${var}. Use \'$var_getter\' command to get the value." >> "/tmp/$var_setter"
-  pinstall -q "/tmp/$var_setter" || exit
+  pinstall "/tmp/$var_setter" > /dev/null || exit
 
   [ -f "$data_path/vars.${var}" ] || echo -n > "$data_path/vars.${var}"
 
   echo "#!/usr/bin/env bash" > "/tmp/$var_getter"
   echo "[ -f '$data_path/vars.${var}' ] && cat '$data_path/vars.${var}'" >> "/tmp/$var_getter"
-  pinstall -q "/tmp/$var_getter" || exit
+  pinstall "/tmp/$var_getter" > /dev/null || exit
 done

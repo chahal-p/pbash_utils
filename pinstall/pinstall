@@ -1,29 +1,5 @@
 #!/usr/bin/env bash
 
-getopt_args=( -o "q" -l "quiet" -- "$@" )
-getopt "${getopt_args[@]}" > /dev/null || exit $?
-PARSED_OPTIONS=$(getopt "${getopt_args[@]}")
-eval set -- "${PARSED_OPTIONS[@]}"
-
-quiet="false"
-
-while true; do
-  case "$1" in
-    -q|--quiet)
-      quiet="true"
-      shift
-      ;;
-    --)
-      shift
-      break
-      ;;
-    *)
-      echo "Unexpected option: $1" >&2
-      exit 1
-      ;;
-  esac
-done
-
 installation_path="$HOME/.local/bin/"
 [ -d $HOME/.local/bin ] || mkdir -p $HOME/.local/bin
 
