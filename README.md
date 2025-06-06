@@ -10,7 +10,8 @@
   1. ```sh
      ./install.sh --install all
      ```
-  1. Add this to .bashrc
+  1. Add below to .bashrc
      ```
      [[ ":$PATH:" == *":$HOME/.local/bin:"* ]] || export PATH="$PATH:$HOME/.local/bin"
+     source pbu_init.sh
      ```
