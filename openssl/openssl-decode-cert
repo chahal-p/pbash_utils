@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+pbu.openssl.decode --type x509 "$@"
