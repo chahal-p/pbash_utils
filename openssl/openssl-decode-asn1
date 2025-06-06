@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+source pbash-args.sh
+
+file=()
+pbash.args.extract -s 'f:' -l 'file:' -o file -- "$@" || { read -p "-f|--file (file path): "; file=$REPLY; }
+
+inform=()
+pbash.args.extract -l 'inform:' -o inform -- "$@" || { read -p "--inform (der/pem): "; inform=$REPLY; }
+
+peval -v -- openssl asn1parse -inform "$inform" -in "$file"

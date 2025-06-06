@@ -45,7 +45,7 @@ done
 [ "${#install_input[@]}" == "0" ] && install_input+=( "${default_install_input[@]}" )
 [ "${#install_input[@]}" == "1" ] && [ "${install_input[0]}" == "all" ] && install_input+=( "${default_install_input[@]}" )
 
-install=()
+install=( __pbu_init__ )
 
 while (( ${#install_input[@]} ))
 do
@@ -67,4 +67,5 @@ do
     [[ "$bn" == "dependencies.txt" || "$bn" == "_complete.sh" ]] && continue
     bash pinstall/pinstall "$p" || exit
   done
+  [ -f "$HOME/.local/bin/pbu_complete.sh" ] && [ -f "./$x/_complete.sh" ] && cat ./$x/_complete.sh | grep -v ^#.*$ >> "$HOME/.local/bin/pbu_complete.sh"
 done
