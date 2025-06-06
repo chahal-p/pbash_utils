@@ -1,2 +1,4 @@
+checks
+errors
 peval
 strings
