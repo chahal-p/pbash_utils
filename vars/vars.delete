@@ -1,23 +1,22 @@
 #!/usr/bin/env bash
 
-complete -W "--setter_prefix --getter_prefix --var" vars.delete
-function vars.delete() {
-  [ -d "$(pbu_data_path)" ] || mkdir "$(pbu_data_path)"
-  local var
-  local vars=()
-  local args=()
-  local setter_prefix=''
-  local getter_prefix=''
+source pbash-args.sh
 
-  pbash.args.extract -l setter_prefix: -o setter_prefix -r args -- "$@"
-  pbash.args.extract -l getter_prefix: -o getter_prefix -r args -- "$@"
-  pbash.args.extract -l var: -o vars -- "${args[@]}" || { pbu.errors.echo "--var is required." ; return 1; }
+data_path="$HOME/.varsdata"
 
-  for var in ${vars[@]}; do
-    local var_setter="${setter_prefix}${var}"
-    local var_getter="${getter_prefix}${var}"
-    [ -f "$(pbu_bin_path)/$var_setter" ] && { echo "Deleting '$(pbu_bin_path)/$var_setter'"; rm -f "$(pbu_bin_path)/$var_setter"; }
-    [ -f "$(pbu_bin_path)/$var_getter" ] && { echo "Deleting '$(pbu_bin_path)/$var_getter'"; rm -f "$(pbu_bin_path)/$var_getter"; }
-    [ -f "$(pbu_data_path)/vars.$var" ] && { echo "Deleting '$(pbu_data_path)/vars.$var'"; rm -f "$(pbu_data_path)/vars.$var"; }
-  done
-}
+vars=()
+args=()
+setter_prefix=''
+getter_prefix=''
+
+pbash.args.extract -l setter_prefix: -o setter_prefix -r args -- "$@"
+pbash.args.extract -l getter_prefix: -o getter_prefix -r args -- "$@"
+pbash.args.extract -l var: -o vars -- "${args[@]}" || { pbu.errors.echo "--var is required." ; exit 1; }
+
+for var in ${vars[@]}; do
+  var_setter="${setter_prefix}${var}"
+  var_getter="${getter_prefix}${var}"
+  puninstall "$var_setter"
+  puninstall "$var_getter"
+  [ -d "$data_path" ] && { echo "Deleting '$data_path/vars.$var'"; rm -f "$data_path/vars.$var"; }
+done

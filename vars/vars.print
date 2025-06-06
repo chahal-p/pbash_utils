@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 
-function vars.print() {
-  local var_path
-  local l=0
-  for var_path in $( ls "$(pbu_data_path)/vars."* 2> /dev/null ); do
-    local bn="$(basename "$var_path")"
-    local var="${bn#vars\.}"
-    l=$(pbu.numbers.max $l "$(pbu.strings.length "$var")")
-  done
-  for var_path in $( ls "$(pbu_data_path)/vars."* 2> /dev/null | sort ); do
-    local bn="$(basename "$var_path")"
-    local var="${bn#vars\.}"
-    printf "%-${l}s : '%-0s'\n" "${var}" "$(cat "$var_path")"
-  done
-}
+data_path="$HOME/.varsdata"
+
+l=0
+for var_path in $( ls "$data_path/vars."* 2> /dev/null ); do
+  bn="$(basename "$var_path")"
+  var="${bn#vars\.}"
+  l=$(pbu.numbers.max $l "$(pbu.strings.length "$var")")
+done
+for var_path in $( ls "$data_path/vars."* 2> /dev/null | sort ); do
+  bn="$(basename "$var_path")"
+  var="${bn#vars\.}"
+  printf "%-${l}s : '%-0s'\n" "${var}" "$(cat "$var_path")"
+done
