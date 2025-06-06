@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+function vars.reset() {
+  local var_path
+  local l=0
+  for var_path in $( ls "$(pbu_data_path)/vars."* 2> /dev/null ); do
+    local bn="$(basename "$var_path")"
+    local var="${bn#vars\.}"
+    echo "Unsetting var $var"
+    echo -n > "$var_path"
+  done
+}

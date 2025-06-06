@@ -1,0 +1,5 @@
+arrays
+checks
+errors
+input
+strings

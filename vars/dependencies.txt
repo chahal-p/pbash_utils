@@ -1,0 +1,4 @@
+errors
+numbers
+pinstall
+strings
