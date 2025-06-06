@@ -15,6 +15,7 @@ default_install_input=(
 "numbers"
 "peval"
 "pinstall"
+"pssh"
 "ptmux"
 "python"
 "strings"
