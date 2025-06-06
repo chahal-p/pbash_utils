@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-
-PARSED_OPTIONS=$(getopt -o "" -l "install:,user,system" -- "$@")
+err=0
+PARSED_OPTIONS=$(getopt -o "" -l "install:" -- "$@" || err=$?)
+[ "$err" == "0" ] || exit $err
 
 eval set -- "$PARSED_OPTIONS"
 
-install_input=(
+default_install_input=(
 "aliases"
 "arrays"
 "checks"
@@ -13,24 +14,19 @@ install_input=(
 "input"
 "numbers"
 "peval"
+"pinstall"
 "python"
 "strings"
 "utils"
 "vars"
 )
 
+install_input=()
+
 while true; do
   case "$1" in
-    --user)
-      install_user=true
-      shift
-      ;;
-    --system)
-      install_system=true
-      shift
-      ;;
     --install)
-      install_input="$2"
+      install_input+=( "$2" )
       shift 2
       ;;
     --)
@@ -44,21 +40,11 @@ while true; do
   esac
 done
 
-[[ $install_user == true && $install_system == true ]] && { echo "Either --uesr or --system should be provided."; exit 1; }
+[ "${#install_input[@]}" == "0" ] && install_input+=( "${default_install_input[@]}" )
+[ "${#install_input[@]}" == "1" ] && [ "${install_input[0]}" == "all" ] && install_input+=( "${default_install_input[@]}" )
 
-installation_type=$1
-installation_path=""
-[ "$install_system" == true ] && installation_path="/usr/local/bin/"
-[ "$install_user" == true ] && installation_path="$HOME/.local/bin/"
-if [ "$install_user" == true ] && [ ! -d $HOME/.local/bin ]
-then
-  mkdir -p $HOME/.local/bin
-fi
-if [ -z "$installation_path" ]
-then
-  echo "Installation type is not provided. Either --user or --system argument is required."
-  exit 1
-fi
+installation_path="$HOME/.local/bin/"
+[ -d $HOME/.local/bin ] || mkdir -p $HOME/.local/bin
 
 install=()
 

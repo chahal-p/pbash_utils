@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-[ -d /tmp/pbu.eval.with_lock ] || mkdir -p /tmp/pbu.eval.with_lock
+[ -d /tmp/peval.with_lock ] || mkdir -p /tmp/peval.with_lock
 
 source pbash-args.sh
 
@@ -16,14 +16,14 @@ pbash.args.extract -l timeout: -o timeout -- "${internal_args[@]}" || timeout="$
 
 pbu.is_macos && args+=( -t "$timeout" ) || args+=( --timeout "$timeout" )
 
-args+=( "/tmp/pbu.eval.with_lock/$lock_id" )
+args+=( "/tmp/peval.with_lock/$lock_id" )
 
 cmd='flock'
 pbu.is_macos && cmd=lockf
 
 if [ "$(pbu.arrays.size "${external_args[@]}")" == "1" ]
 then
-  $cmd "${args[@]}" -c "pbu.eval -v -- ${external_args[@]}"
+  $cmd "${args[@]}" -c "peval -v -- ${external_args[@]}"
 else
-  $cmd "${args[@]}" pbu.eval -v -- "${external_args[@]}"
+  $cmd "${args[@]}" peval -v -- "${external_args[@]}"
 fi

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+installation_path="$HOME/.local/bin/"
+[ -d $HOME/.local/bin ] || mkdir -p $HOME/.local/bin
+
+for p in "$@"
+do
+  p="$(realpath "$p")"
+  bn="$(basename "$p")"
+  [ -f "$p" ] && echo "Installing: $bn" && cp "$p" "${installation_path}${bn}" && chmod +x "${installation_path}${bn}" || { echo "Installation failed"; exit 1; }
+done

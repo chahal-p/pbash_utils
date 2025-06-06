@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+installation_path="$HOME/.local/bin/"
+[ -d $HOME/.local/bin ] || { echo "Uninstallation failed"; exit 1; }
+
+for f in "$@"
+do
+  [ -f "$f" ] && echo "Uninstalling: $f" && rm "${installation_path}${f}" || { echo "Uninstallation failed"; exit 1; }
+done

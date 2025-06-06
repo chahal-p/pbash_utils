@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source pbu.read_input.sh
+source pbash-args.sh
 
 internal_args=()
 external_args=()
@@ -16,8 +16,8 @@ pbash.args.extract -l serialized_args -o serialized_args -d 'false' -- "${intern
 if [ "$serialized_args" == "true" ]
 then
   [ "$(pbu.arrays.size "${external_args[@]}")" == "1" ] || { pbu.errors.echo "Serialized args should be extact single argument"; exit 1; }
-  pbu.eval.deserialize_args "$external_args" > /dev/null || exit 1
-  readarray -t deserialized_args <<< "$(pbu.eval.deserialize_args "$external_args")"
+  peval.deserialize_args "$external_args" > /dev/null || exit 1
+  readarray -t deserialized_args <<< "$(peval.deserialize_args "$external_args")"
   external_args=()
   external_args=( "${deserialized_args[@]}" )
 fi
@@ -30,7 +30,7 @@ then
 else
   for ____x____ in "${external_args[@]}"
   do
-    ____args____+=( "$(pbu.eval.format_string "$____x____")" )
+    ____args____+=( "$(peval.format_string "$____x____")" )
   done
 fi
 

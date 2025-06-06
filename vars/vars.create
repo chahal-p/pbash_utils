@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source pbash-args.sh
+
 data_path="$HOME/.varsdata"
 
 [ -d "$data_path" ] || mkdir "$data_path"
@@ -18,13 +20,13 @@ for var in ${vars[@]}; do
   local var_getter="${getter_prefix}${var}"
 
   echo "#!/usr/bin/env bash" > "/tmp/$var_setter"
-  echo "echo "\$1" > $(pbu_data_path)/vars.${var}" >> "/tmp/$var_setter"
+  echo "echo "\$1" > $data_path/vars.${var}" >> "/tmp/$var_setter"
   echo "echo \'\$1\' is set in ${var}. Use \'$var_getter\' command to get the value." >> "/tmp/$var_setter"
   pbu_install "/tmp/$var_setter"
 
-  [ -f "$(pbu_data_path)/vars.${var}" ] || echo -n > "$(pbu_data_path)/vars.${var}"
+  [ -f "$data_path/vars.${var}" ] || echo -n > "$data_path/vars.${var}"
 
   echo "#!/usr/bin/env bash" > "/tmp/$var_getter"
-  echo "[ -f '$(pbu_data_path)/vars.${var}' ] && cat '$(pbu_data_path)/vars.${var}'" >> "/tmp/$var_getter"
+  echo "[ -f '$data_path/vars.${var}' ] && cat '$data_path/vars.${var}'" >> "/tmp/$var_getter"
   pbu_install "/tmp/$var_getter"
 done
