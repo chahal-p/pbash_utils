@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+source pbash-args.sh
 source pbu_complete.sh
 
 function reload-bashrc() {
