@@ -3,7 +3,7 @@
 source pbash-args.sh
 
 type=()
-pbash.args.extract -l 'type:' -o type -- "$@" || pbu.errors.echo "--type is required option" || exit 1
+pbash.args.extract -l 'type:' -o type -- "$@" || { pbu.errors.echo "--type is required option"; exit 1; }
 
 file=()
 pbash.args.extract -s 'f:' -l 'file:' -o file -- "$@" || { read -p "-f|--file (file path): "; file=$REPLY; }
