@@ -5,6 +5,10 @@ kv="$1"
 key="${kv%=*}"
 value="${kv#*=}"
 
-echo "#!/usr/bin/env bash" > /tmp/$key
-printf "$value \"\$@\"" >> /tmp/$key
-pinstall --file /tmp/$key
+pinstall --name "$key" --content "#!/usr/bin/env bash
+$value \"\$@\"
+"
+
+# echo "#!/usr/bin/env bash" > /tmp/$key
+# printf "$value \"\$@\"" >> /tmp/$key
+# pinstall --file /tmp/$key
