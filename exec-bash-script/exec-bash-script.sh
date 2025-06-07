@@ -29,7 +29,7 @@ function exec-bash-script() {
   if pbash.args.is_switch_arg_enabled -l 'in-current-bash-session' -r remaining_args -- "$@";
   then
     set -- "${remaining_args[@]}"
-    pbu.eval -- "." "./$name.sh" "$@"
+    peval -- "." "./$name.sh" "$@"
   else
     set -- "${remaining_args[@]}"
     bash "$name.sh" "$@"
@@ -68,8 +68,8 @@ function edit-bash-script() {
 
   if [ ! -f "$basePath/$name.sh" ]
   then
-    pbu.eval -- touch "$basePath/$name.sh"
-    pbu.eval -- chmod +x "$basePath/$name.sh"
+    peval -- touch "$basePath/$name.sh"
+    peval -- chmod +x "$basePath/$name.sh"
   fi
-  pbu.eval -- "$editor" "$basePath/$name.sh"
+  peval -- "$editor" "$basePath/$name.sh"
 }

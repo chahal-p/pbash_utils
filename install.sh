@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-err=0
-PARSED_OPTIONS=$(getopt -o "" -l "install:" -- "$@" || err=$?)
-[ "$err" == "0" ] || exit $err
 
-eval set -- "$PARSED_OPTIONS"
+function error_echo() {
+  echo -e "\e[01;31m${@}\e[0m"
+}
+
+source pbash-args.sh || { error_echo "pbash-args.sh is not installed"; exit 1; }
 
 default_install_input=(
 "aliases"
@@ -11,7 +12,9 @@ default_install_input=(
 "checks"
 "copy"
 "date"
+"docker"
 "errors"
+"exec-bash-script"
 "input"
 "numbers"
 "openssl"
@@ -27,24 +30,9 @@ default_install_input=(
 
 install_input=()
 
-while true; do
-  case "$1" in
-    --install)
-      install_input+=( "$2" )
-      shift 2
-      ;;
-    --)
-      shift
-      break
-      ;;
-    *)
-      echo "Unexpected option: $1" >&2
-      exit 1
-      ;;
-  esac
-done
+pbash.args.extract -l install: -o install_input -- "$@"
 
-[ "${#install_input[@]}" == "0" ] && install_input+=( "${default_install_input[@]}" )
+[[ "${#install_input[@]}" == "0" || "${install_input[0]}" == "" ]] && { error_echo "Non-empty --install argument is required."; exit 1; }
 [ "${#install_input[@]}" == "1" ] && [ "${install_input[0]}" == "all" ] && install_input+=( "${default_install_input[@]}" )
 
 install=( __pbu_init__ )
