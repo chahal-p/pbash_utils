@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+pbu.date -d "$(pbu.date -u -d "$1")"
