@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source pbash-args.sh
+source pbash-args.sh || { echo "pbash-args.sh is not installed"; exit 1; }
 
 pbash.args.split_with_double_hyphen --args1 internal_args --args2 external_args -- "$@"
 
