@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-source pbash-args.sh
+source pbash-args.sh || { echo "pbash-args.sh is not installed"; exit 1; }
+
 source pbu_complete.sh
 
 function reload-bashrc() {

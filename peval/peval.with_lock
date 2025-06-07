@@ -2,7 +2,7 @@
 
 [ -d /tmp/peval.with_lock ] || mkdir -p /tmp/peval.with_lock
 
-source pbash-args.sh
+source pbash-args.sh || { echo "pbash-args.sh is not installed"; exit 1; }
 
 internal_args=()
 external_args=()

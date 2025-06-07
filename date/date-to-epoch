@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source pbash-args.sh
+source pbash-args.sh || { echo "pbash-args.sh is not installed"; exit 1; }
 
 pbash.args.is_switch_arg_enabled -l 'out-nanoseconds' -- "$@" ||
 pbash.args.is_switch_arg_enabled -l 'out-microseconds' -- "$@" ||

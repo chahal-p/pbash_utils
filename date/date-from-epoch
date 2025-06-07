@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source pbash-args.sh
+source pbash-args.sh || { echo "pbash-args.sh is not installed"; exit 1; }
 
 pbash.args.atleast_one_arg_present -l 'nanoseconds:' -l 'microseconds:' -l 'milliseconds:' -l 'seconds:' -- "$@" ||
 { pbu.errors.echo "At least one of args --nanoseconds, --microseconds, --milliseconds or --seconds is required"; exit 1; }
