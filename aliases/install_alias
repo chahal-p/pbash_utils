@@ -5,4 +5,4 @@ shift
 
 echo "#!/usr/bin/env bash" > /tmp/$key
 printf "$@ \"\$@\"" >> /tmp/$key
-pinstall /tmp/$key
+pinstall --file /tmp/$key

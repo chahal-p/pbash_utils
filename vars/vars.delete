@@ -16,7 +16,7 @@ pbash.args.extract -l var: -o vars -- "${args[@]}" || { pbu.errors.echo "--var i
 for var in ${vars[@]}; do
   var_setter="${setter_prefix}${var}"
   var_getter="${getter_prefix}${var}"
-  puninstall "$var_setter"
-  puninstall "$var_getter"
+  puninstall --name "$var_setter"
+  puninstall --name "$var_getter"
   [ -d "$data_path" ] && { echo "Deleting '$data_path/vars.$var'"; rm -f "$data_path/vars.$var"; }
 done

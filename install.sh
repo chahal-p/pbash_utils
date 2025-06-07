@@ -67,7 +67,7 @@ do
     p="$(realpath "$f")"
     bn="$(basename "$p")"
     [[ "$bn" == "dependencies.txt" || "$bn" == "_complete.sh" ]] && continue
-    bash pinstall/pinstall "$p" || exit
+    bash pinstall/pinstall --file "$p" || exit
   done
   [ -f "$HOME/.local/bin/pbu_complete.sh" ] && [ -f "./$x/_complete.sh" ] && cat ./$x/_complete.sh | grep -v ^#.*$ >> "$HOME/.local/bin/pbu_complete.sh"
 done
