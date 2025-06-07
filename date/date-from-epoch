@@ -3,7 +3,7 @@
 source pbash-args.sh
 
 pbash.args.atleast_one_arg_present -l 'nanoseconds:' -l 'microseconds:' -l 'milliseconds:' -l 'seconds:' -- "$@" ||
-pbu.errors.echo "At least one of args --nanoseconds, --microseconds, --milliseconds or --seconds is required" || exit 1
+{ pbu.errors.echo "At least one of args --nanoseconds, --microseconds, --milliseconds or --seconds is required"; exit 1; }
 
 values=()
 
@@ -14,7 +14,7 @@ pbash.args.extract -l 'microseconds:' -o value -- "$@" && values+=( $(($value * 
 pbash.args.extract -l 'milliseconds:' -o value -- "$@" && values+=( $(($value * 1000000)) )
 pbash.args.extract -l 'seconds:' -o value -- "$@" && values+=( "$(($value * 1000000000))" )
 
-pbu.strings.is_equal "${#values[@]}" "1" || pbu.errors.echo "Only one should be passed out of --nanoseconds, --microseconds, --milliseconds or --seconds" || exit 1
+pbu.strings.is_equal "${#values[@]}" "1" || { pbu.errors.echo "Only one should be passed out of --nanoseconds, --microseconds, --milliseconds or --seconds"; exit 1; }
 
 nanoseconds="$values"
 

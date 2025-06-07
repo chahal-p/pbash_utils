@@ -11,7 +11,7 @@ ssh_args=()
 
 u=""
 h=""
-pbash.args.extract -s h: -l host: -o h -r args -- "${args[@]}" || pbash.args.errors.echo "-h/--host is required" || exit 1
+pbash.args.extract -s h: -l host: -o h -r args -- "${args[@]}" || { pbash.args.errors.echo "-h/--host is required"; exit 1; }
 pbash.args.extract -s u: -l user: -o u -r args -- "${args[@]}"
 
 if [ "$(hostname)" == "$h" ]
