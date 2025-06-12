@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-[ -d "/tmp/.pbash_utils" ] || git clone https://github.com/parveenchahal/pbash_utils.git /tmp/.pbash_utils
+[ -d "/tmp/.pbash_utils" ] || git clone https://github.com//chahal-p/pbash_utils.git /tmp/.pbash_utils
 pushd /tmp/.pbash_utils > /dev/null
 git pull
 
