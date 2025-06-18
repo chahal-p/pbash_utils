@@ -2,72 +2,71 @@
 
 complete -W "-s --short -l --long -d --default-value -o --out-values-var -r --remaining-args-var --help" pbash.args.extract
 function pbash.args.extract() {
-
-
-  local usage="
+  _pbash.args.show_doc "$@" "$(cat<<EOF
 pbash.args.extract parse args and update the value of arg in a local varible name provided in -o/--out-values-var.
 
-Example:
-  arg1_val=""
-  pbash.args.extract -l arg1: -o arg1_val -- --arg1 abc
-  echo \$arg1_val  # abc will be printed (Value of arg1 will be updated in arg1_val.)
+Usage:
+arg1_val=""
+pbash.args.extract -l arg1: -o arg1_val -- --arg1 abc
+echo $arg1_val  # abc will be printed
 
-  force_val=""
-  pbash.args.extract -l force -o force_val -- --force=false
-  echo \$force_val #  false will be printed for a bool argument
-  pbash.args.extract -l force -o force_val -- --force
-  echo \$force_val #  true will be printed for a bool argument
+force_val=""
+pbash.args.extract -l force -o force_val -- --force=false
+echo $force_val #  false will be printed for a bool argument
+pbash.args.extract -l force -o force_val -- --force
+echo $force_val #  true will be printed for a bool argument
 
-FLAGS:
-  {FLAGS}"
+
+Value of arg1 will be updated in arg1_val.
+
+Options:
+-s, --short               Short argument key
+-l, --long                Long argument key
+-d, --default             Default value if arg is not provided
+-o, --out-values-var      A local varible name where output will be updated
+-r, --remaining-args-var  Remaining argument list, excluding key and value of -s/--short and -l/--long
+EOF
+)" && return 0
 
   local _____SPLITED_ARGS1_____=()
   local _____SPLITED_ARGS2_____=()
   ___pbash_split_args_by_double_hyphen___ "$@" || return $PBASH_ARGS_ERROR_USAGE
-  local ____internal_args____=( "${_____SPLITED_ARGS1_____[@]}" )
-  local ____external_args____=( "${_____SPLITED_ARGS2_____[@]}" )
+  local internal_args=( "${_____SPLITED_ARGS1_____[@]}" )
+  local external_args=( "${_____SPLITED_ARGS2_____[@]}" )
 
-  __parsedpflags__=$(pflags parse --usage "$usage" \
-    ---- --short "s" --long "short" --type string --default "" \
-      -- --short "l" --long "long" --type string --default "" \
-      -- --short "d" --long "default" --type string  \
-      -- --short "o" --long "out-values-var" --type string --required --default "" \
-      -- --short "r" --long "remaining-args-var" --type string --default "" \
-    ---- "${____internal_args____[@]}") || { local err=$?; [ "$err" == "$PBASH_ARGS_ERROR_USAGE_HELP_REQUESTED" ] && echo "$__parsedpflags__"; return $err; }
-  
-  local args=()
+  local _____REPLY_____=()
+  local _____REMAINING_ARGS_____=()
 
-  ____short____=$(pflags get -n short "$__parsedpflags__") || return $?
-  args+=( -s "${____short____%:}" )
-  ____long____=$(pflags get -n long "$__parsedpflags__") || return $?
-  args+=( -l "${____long____%:}" )
+  ___pbash_extract_arg___ 'o:' 'out-values-var:' "${internal_args[@]}" && local -n out_values="$_____REPLY_____" || local out_values
 
-  local ____type____
-  local type_from_short=""
-  local type_from_long=""
+  ___pbash_extract_arg___ 'r:' 'remaining-args-var:' "${internal_args[@]}" && local -n out_remaining_args="$_____REPLY_____" || local out_remaining_args
 
-  [ -z "$____short____" ] || { [[ "$____short____" =~ .*: ]] && { type_from_short="string"; } || type_from_short="bool"; }
-  [ -z "$____long____" ] || { [[ "$____long____" =~ .*: ]] && { type_from_long="string"; } || type_from_long="bool"; }
-  [ -z "$____short____" ] || [ -z "$____long____" ] || [ "$type_from_short" == "$type_from_long" ] || { echo "Both short and long should be of same type"; return 1; }
-  [ -z "$____short____" ] || ____type____="$type_from_short"
-  [ -z "$____long____" ] || ____type____="$type_from_long"
+  out_values=()
+  out_remaining_args=( "${external_args[@]}" )
 
-  args+=( -t "$____type____" )
+  _____REPLY_____=()
 
-  ____default____=$(pflags get -n default "$__parsedpflags__" 2> /dev/null) && args+=( --default "$____default____" )
-  ____out____=$(pflags get -n out-values-var "$__parsedpflags__") || return $?
-  ____remaining____=$(pflags get -n remaining-args-var "$__parsedpflags__") || return $?
+  ___pbash_extract_arg___ 's:' 'short:' "${internal_args[@]}"
+  local short_keys=( "${_____REPLY_____[@]}" )
+  [ ${#short_keys[@]} -lt 2 ] || pbash.args.errors.echo "Multiple short args can not be handled" || return $PBASH_ARGS_ERROR_USAGE
 
-  local ____flag_name____=""
+  ___pbash_extract_arg___ 'l:' 'long:' "${internal_args[@]}"
+  local long_keys=( "${_____REPLY_____[@]}" )
+  [ ${#long_keys[@]} -lt 2 ] || pbash.args.errors.echo "Multiple long args can not be handled" || return $PBASH_ARGS_ERROR_USAGE
 
-  [ -z "$____short____" ] || ____flag_name____="${____short____%:}"
-  [ -z "$____long____" ] || ____flag_name____="${____long____%:}"
+  ___pbash_extract_arg___ 'd:' 'default-value:' "${internal_args[@]}"
+  local default_value=( "${_____REPLY_____[@]}" )
 
-  __parsedpflags__=$(pflags parse ---- "${args[@]}" ---- "${____external_args____[@]}") || return $?
-  values=$(pflags get -n "$____flag_name____" "$__parsedpflags__") || return $?
-  local -n out_values="$____out____"
-  readarray -t out_values <<< "${values}"
-  [ ! -z "$____remaining____" ] && local -n out_remaining_args="$____remaining____" && readarray -t out_remaining_args <<< "$(pflags unparsed "$__parsedpflags__")"
+  ___pbash_extract_arg___ "$short_keys" "$long_keys" "${external_args[@]}"
+  local err=$?
+  out_values=( "${_____REPLY_____[@]}" )
+  out_remaining_args=( "${_____REMAINING_ARGS_____[@]}" )
+
+  pbash.args.errors.is_not_found_error "$err" || return $err
+  [ "${#default_value[@]}" != "0" ] || return $err
+
+  out_values=( "${default_value[@]}" )
+  return 0
 }
 
 complete -W "--args1 --args2" pbash.args.split_with_double_hyphen
@@ -259,14 +258,56 @@ function pbash.args.all_args_present() {
   return $PBASH_ARGS_SUCCESS
 }
 
+
+#============================================================================
+function _pbash.args.has_help() {
+  local x
+  for x in "$@"
+  do
+    [[ "$x" == "--help" ]] && return 0
+  done
+  return 1
+}
+
+function _pbash.args.show_doc() {
+  local show_doc=true
+  _pbash.args.has_help "$@" || show_doc=false
+  [ "$show_doc" == "true" ] && echo "${@: -1}" && return 0
+  return 1
+}
+
+
+#============================================================================
+function _pbash.args._updates.need_update {
+  local x="$(curl -sL https://pbash.pcapis.com/args/pbash-args.sh | sha256sum | head -c 64)"
+  local e="$(echo -n | sha256sum | head -c 64)"
+  [[ "$x" == "$e" ]] && return 0
+  local installed_file=/usr/local/bin/pbash-args.sh
+  [ -f $installed_file ] || installed_file=$HOME/.local/bin/pbash-args.sh
+  local y="$(cat $installed_file | sha256sum | head -c 64)"
+  
+  [ "$x" == "$y" ] || return 1
+  return 0
+}
+
+_pbash.args._updates.need_update || echo "WARNING: pbash-args.sh has a version available. Run either 'pbash.args.update_latest_version' or follow installation instructions from https://github.com/parveenchahal/pbash-args"
+
+function pbash.args.update_latest_version() {
+  local installation_path="$(which pbash-args.sh)"
+  if [ "$installation_path" == "/usr/local/bin/pbash-args.sh" ]
+  then
+    curl -sL https://pbash.pcapis.com/args/install.sh | sudo bash -s -- --system
+    return $?
+  fi
+  curl -sL https://pbash.pcapis.com/args/install.sh | bash -s -- --user
+  return $?
+}
+
 #============================================================================
 PBASH_ARGS_SUCCESS=0
 PBASH_ARGS_ERROR=1
 PBASH_ARGS_ERROR_USAGE=2
-PBASH_ARGS_ERROR_INVALID_VALUE=4
 PBASH_ARGS_ERROR_NOT_FOUND=40
-PBASH_ARGS_ERROR_INTERNAL=99
-PBASH_ARGS_ERROR_USAGE_HELP_REQUESTED=100
 
 function pbash.args.errors.get_error_code() {
   local err="$?"
@@ -326,4 +367,85 @@ function ___pbash_split_args_by_double_hyphen___() {
     return
   fi
   args2=( "${@}" )
+}
+
+function ___pbash_extract_arg___() {
+  local short_key="$1"
+  shift
+  local long_key="$1"
+  shift
+
+  local -n remaining_args='_____REMAINING_ARGS_____'
+  local -n reply='_____REPLY_____'
+
+  remaining_args=( "$@" )
+  reply=()
+
+  [ "$short_key" != "" ] ||
+  [ "$long_key" != "" ] ||
+  pbash.args.errors.echo "At least one of either short or long option is required" || return $PBASH_ARGS_ERROR_USAGE
+
+  local short_is_switch_arg=0
+  [ "$short_key" != "" ] && [[ ! "$short_key" =~ .*:$ ]] && short_is_switch_arg=1
+  short_key="${short_key%:}"
+
+  local long_is_switch_arg=0
+  [ "$long_key" != "" ] && [[ ! "$long_key" =~ .*:$ ]] && long_is_switch_arg=1
+  long_key="${long_key%:}"
+
+  [ "$short_key" == "" ] ||
+  [ "$long_key" == "" ] ||
+  [ "$short_is_switch_arg" == "$long_is_switch_arg" ] ||
+  pbash.args.errors.echo "Short and long args should be of same type either switch or key/value." || return $PBASH_ARGS_ERROR_USAGE
+
+  local is_switch_arg=0
+  [[ "$short_is_switch_arg" == "1" || "$long_is_switch_arg" == "1" ]] && is_switch_arg=1
+
+  remaining_args=()
+
+  local found=0
+  while [ "${#@}" != "0" ] ; do
+    if [[ "$1" == "--" || "$1" == "-" ]]
+    then
+      shift
+      continue
+    fi
+    case "$1" in
+      --$long_key|-$short_key)
+          found=1 ;
+          [ "$is_switch_arg" == "1" ] && reply+=( "true" ) ;
+          [ "$is_switch_arg" == "0" ] && [[ ! "$2" =~ ^-.* ]] && reply+=( "$2" ) && shift ;
+          ;;
+      --$long_key=*)
+          found=1 ;
+          local val="${1#"--$long_key="}" ;
+          [ "$is_switch_arg" == "0" ] ||
+          [[ "$val" == "true" || "$val" == "false" ]] ||
+          pbash.args.errors.echo "Invalid valid for --$long_key. Expected true or false." ||
+          return $PBASH_ARGS_ERROR_USAGE ;
+
+          reply+=( "$val" ) ;
+          ;;
+      -$short_key=*)
+          found=1 ;
+          local val="${1#"-$short_key="}" ;
+          [ "$is_switch_arg" == "0" ] ||
+          [[ "$val" == "true" || "$val" == "false" ]] ||
+          pbash.args.errors.echo "Invalid valid for -$short_key. Expected true or false." ||
+          return $PBASH_ARGS_ERROR_USAGE;
+
+          reply+=( "$val" ) ;
+          ;;
+      *)
+          remaining_args+=( "$1" );;
+    esac
+    shift
+  done
+
+  if [ "$found" == 0 ]
+  then
+    reply=()
+    return $PBASH_ARGS_ERROR_NOT_FOUND
+  fi
+  return 0
 }
