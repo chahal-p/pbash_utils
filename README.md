@@ -1,8 +1,5 @@
 # Installation
-  1. Install pbash-args.sh
-     ```
-     curl -sL https://pbash.pcapis.com/args/install.sh | bash -s -- --user
-     ```
+  1. Install pflags from https://github.com/chahal-p/pflags
   1. Clone git repo
      ```sh
      git clone https://github.com/parveenchahal/pbash_utils.git
