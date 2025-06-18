@@ -276,33 +276,6 @@ function _pbash.args.show_doc() {
   return 1
 }
 
-
-#============================================================================
-function _pbash.args._updates.need_update {
-  local x="$(curl -sL https://pbash.pcapis.com/args/pbash-args.sh | sha256sum | head -c 64)"
-  local e="$(echo -n | sha256sum | head -c 64)"
-  [[ "$x" == "$e" ]] && return 0
-  local installed_file=/usr/local/bin/pbash-args.sh
-  [ -f $installed_file ] || installed_file=$HOME/.local/bin/pbash-args.sh
-  local y="$(cat $installed_file | sha256sum | head -c 64)"
-  
-  [ "$x" == "$y" ] || return 1
-  return 0
-}
-
-_pbash.args._updates.need_update || echo "WARNING: pbash-args.sh has a version available. Run either 'pbash.args.update_latest_version' or follow installation instructions from https://github.com/parveenchahal/pbash-args"
-
-function pbash.args.update_latest_version() {
-  local installation_path="$(which pbash-args.sh)"
-  if [ "$installation_path" == "/usr/local/bin/pbash-args.sh" ]
-  then
-    curl -sL https://pbash.pcapis.com/args/install.sh | sudo bash -s -- --system
-    return $?
-  fi
-  curl -sL https://pbash.pcapis.com/args/install.sh | bash -s -- --user
-  return $?
-}
-
 #============================================================================
 PBASH_ARGS_SUCCESS=0
 PBASH_ARGS_ERROR=1

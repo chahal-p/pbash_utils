@@ -12,7 +12,6 @@ function pbu.quiet_source() {
 function ___error_echo() {
   echo -e "\e[01;31m${@}\e[0m"
 }
-source pbash-args.sh || { ___error_echo "pbash-args.sh is not installed"; exit 1; }
 
 source pbu_complete.sh
 

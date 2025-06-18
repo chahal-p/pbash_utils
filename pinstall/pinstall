@@ -4,16 +4,19 @@ function error_echo() {
   echo -e "\e[01;31m${@}\e[0m"
 }
 
-source pbash-args.sh || { echo "pbash-args.sh is not installed"; exit 1; }
-
 name=()
 content=()
 file=()
 
-pbash.args.extract -l name: -o name -- "$@"
-pbash.args.extract -l content: -o content -- "$@"
-pbash.args.extract -l file: -o file -- "$@"
-pbash.args.extract -l quiet -o quiet -- "$@"
+parsed=$(pflags parse \
+  ---- -l name -t string --default "" \
+    -- -l content -t string --default "" \
+    -- -l file -t string --default "" \
+  ---- "$@") || exit $?
+
+name=$(pflags get -n name "$parsed" ) || exit $?
+content=$(pflags get -n content "$parsed" ) || exit $?
+file=$(pflags get -n file "$parsed" ) || exit $?
 
 [ "$name" == "" ] && [ "$content" == "" ] && [ "$file" == "" ] && { error_echo "No argument provided."; exit 1; }
 [ ! "$content" == "" ] && [ ! "$file" == "" ] && { error_echo "Only one of --content or --file is expected."; exit 1; }

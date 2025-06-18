@@ -4,8 +4,6 @@ function error_echo() {
   echo -e "\e[01;31m${@}\e[0m"
 }
 
-source pbash-args.sh || { error_echo "pbash-args.sh is not installed"; exit 1; }
-
 default_install_input=(
 "aliases"
 "arrays"
@@ -30,8 +28,8 @@ default_install_input=(
 
 install_input=()
 
-pbash.args.extract -l install: -o install_input -- "$@"
-
+parsed=$(pflags parse ---- -l install -t string -r ---- "$@") || exit $?
+install_input+=( "$(pflags get -n install "$parsed")" )
 [[ "${#install_input[@]}" == "0" || "${install_input[0]}" == "" ]] && { error_echo "Non-empty --install argument is required."; exit 1; }
 [ "${#install_input[@]}" == "1" ] && [ "${install_input[0]}" == "all" ] && install_input+=( "${default_install_input[@]}" )
 
