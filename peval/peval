@@ -15,7 +15,7 @@ pbash.args.extract -l serialized_args -o serialized_args -d 'false' -- "${intern
 
 if [ "$serialized_args" == "true" ]
 then
-  [ "$(pbu.arrays.size "${external_args[@]}")" == "1" ] || { pbu.errors.echo "Serialized args should be extact single argument"; exit 1; }
+  [ "$(pbu.arrays.size "${external_args[@]}")" == "1" ] || { pbu.errors.echo "Serialized args should be exactly single argument"; exit 1; }
   peval.deserialize_args "$external_args" > /dev/null || exit 1
   readarray -t deserialized_args <<< "$(peval.deserialize_args "$external_args")"
   external_args=()
