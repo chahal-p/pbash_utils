@@ -13,6 +13,8 @@ function ___error_echo() {
   echo -e "\e[01;31m${@}\e[0m"
 }
 
+pbu.quiet_source pbash-args.sh
+
 source pbu_complete.sh
 
 pbu.quiet_source conversion.sh
