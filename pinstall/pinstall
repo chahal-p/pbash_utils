@@ -18,6 +18,7 @@ parsed=$(pflags parse \
 name=$(pflags get -n name "$parsed" ) || exit $?
 content=$(pflags get -n content "$parsed" ) || exit $?
 file=$(pflags get -n file "$parsed" ) || exit $?
+quiet=$(pflags get -n quiet "$parsed" ) || exit $?
 
 [ "$name" == "" ] && [ "$content" == "" ] && [ "$file" == "" ] && { error_echo "No argument provided."; exit 1; }
 [ ! "$content" == "" ] && [ ! "$file" == "" ] && { error_echo "Only one of --content or --file is expected."; exit 1; }
