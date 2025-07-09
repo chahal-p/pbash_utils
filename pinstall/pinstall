@@ -12,7 +12,7 @@ parsed=$(pflags parse \
   ---- -l name -t string --default "" \
     -- -l content -t string --default "" \
     -- -l file -t string --default "" \
-    -- -l quiet -t bool \ 
+    -- -l quiet -t bool \
   ---- "$@") || exit $?
 
 name=$(pflags get -n name "$parsed" ) || exit $?
