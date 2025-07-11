@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+function pathadd() {
+  [[ ":$PATH:" == *":$1:"* ]] || export PATH="$1:$PATH"
+}
+
 function reload-bashrc() {
   source ~/.bashrc
 }
