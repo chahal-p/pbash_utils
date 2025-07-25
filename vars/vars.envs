@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+data_path="$HOME/.varsdata"
+
+l=0
+for var_path in $( ls "$data_path/vars."* 2> /dev/null ); do
+  bn="$(basename "$var_path")"
+  var="${bn#vars\.}"
+  l=$(pbu.numbers.max $l "$(pbu.strings.length "$var")")
+done
+for var_path in $( ls "$data_path/vars."* 2> /dev/null | sort ); do
+  bn="$(basename "$var_path")"
+  var="${bn#vars\.}"
+  printf "%s='%s';\n" "${var}" "$(cat "$var_path")"
+done
