@@ -5,7 +5,7 @@ data="$1"
 pbu.is_macos
 if [ $? == 0 ]
 then
-  cat <<< "$data" | pbcopy
+  print "%s" "$data" | pbcopy
   exit $?
 fi
-cat <<< "$data" | xclip -selection clipboard
+print "%s" "$data" | xclip -selection clipboard
