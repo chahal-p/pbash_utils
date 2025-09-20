@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+parsed=$(pflags parse --description "Watch the source directory or file and rsync it to a remote destination.\n{FLAGS}" \
+  ---- -l host -t string --required -h "Remote host" \
+    -- -l source -t string --required -h "Source directory or file" \
+    -- -l destination -t string --required -h "Destination directory or file" \
+  ---- "$@") || exit 1
+
+pflags printhelp "$parsed" && exit
+
+host="$(pflags get -n host "$parsed")" || exit
+source="$(pflags get -n source "$parsed")" || exit
+destination="$(pflags get -n destination "$parsed")" || exit
+
+watchexec -w "$source" rsync -azv --delete "$source" "$host:$destination"
