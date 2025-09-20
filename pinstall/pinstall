@@ -9,7 +9,7 @@ content=()
 file=()
 
 parsed=$(pflags parse \
-  ---- -l name -t string -r --help "Name of the installation" \
+  ---- -l name -t string --default '' --help "Name of the installation" \
     -- -l content -t string --default '' --help "Content needs to be written to the installed file" \
     -- -l file -t string --default '' --help "Path of file being installed" \
     -- -l quiet -t bool --help "Stop printing installation logs" \
