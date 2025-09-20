@@ -28,7 +28,7 @@ default_install_input=(
 
 install_input=()
 
-parsed=$(pflags parse ---- -l install -t string -h 'Utils which needs to be installed, use "all" as value to install all' -r ---- "$@") || exit $?
+parsed=$(pflags --name "$(basename "$0")" parse ---- -l install -t string -h 'Utils which needs to be installed, use "all" as value to install all' -r ---- "$@") || exit $?
 pflags printhelp $parsed && exit
 
 install_input+=( "$(pflags get -n install "$parsed")" )

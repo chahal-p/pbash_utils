@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-parsed=$(pflags parse --description "Watch the source directory or file and rsync it to a remote destination.\n{FLAGS}" \
+parsed=$(pflags --name "$(basename "$0")" parse --description "Watch the source directory or file and rsync it to a remote destination.\n{FLAGS}" \
   ---- -l host -t string --required -h "Remote host" \
     -- -l source -t string --required -h "Source directory or file" \
     -- -l destination -t string --required -h "Destination directory or file" \
