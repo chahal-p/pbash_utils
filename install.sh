@@ -28,7 +28,9 @@ default_install_input=(
 
 install_input=()
 
-parsed=$(pflags parse ---- -l install -t string -r ---- "$@") || exit $?
+parsed=$(pflags parse ---- -l install -t string -h 'Utils which needs to be installed, use "all" as value to install all' -r ---- "$@") || exit $?
+pflags printhelp $parsed && exit
+
 install_input+=( "$(pflags get -n install "$parsed")" )
 [[ "${#install_input[@]}" == "0" || "${install_input[0]}" == "" ]] && { error_echo "Non-empty --install argument is required."; exit 1; }
 [ "${#install_input[@]}" == "1" ] && [ "${install_input[0]}" == "all" ] && install_input+=( "${default_install_input[@]}" )
