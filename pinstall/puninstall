@@ -4,15 +4,14 @@ function error_echo() {
   echo -e "\e[01;31m${@}\e[0m"
 }
 
-source pbash-args.sh || { echo "pbash-args.sh is not installed"; exit 1; }
+parsed=$(pflags parse --name "$0" ---- -l name -t string -r -h "Name of command" ---- "$@") || exit
+pflags printhelp "$parsed" && exit
 
-pbash.args.extract -l name: -o name -- "$@"
-
-[ "$name" == "" ] && { error_echo "--name is required argument."; exit 1; }
+name="$(pflags get --name name "$parsed")" || exit
 
 installation_path="$HOME/.local/bin/"
 [ -d $HOME/.local/bin ] || { error_echo "Uninstallation failed"; exit 1; }
 
 p="${installation_path}${name}"
 
-[ -f "$p" ] && echo "Uninstalling: $name" && rm "$p" || { error_echo "Uninstallation failed"; exit 1; }
+[ -f "$p" ] && echo "Uninstalling: $name" && rm "$p" || { error_echo "$p: Uninstallation failed"; exit 1; }

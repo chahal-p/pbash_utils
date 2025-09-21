@@ -18,7 +18,7 @@ default_install_input=(
 "openssl"
 "peval"
 "pinstall"
-"pssh"
+"ssh"
 "ptmux"
 "python"
 "strings"
