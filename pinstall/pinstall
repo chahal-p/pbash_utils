@@ -8,7 +8,7 @@ name=()
 content=()
 file=()
 
-parsed=$(pflags --name "$(basename "$0")" parse \
+parsed=$(pflags parse --name "$(basename "$0")" \
   ---- -l name -t string --default '' --help "Name of the installation" \
     -- -l content -t string --default '' --help "Content needs to be written to the installed file" \
     -- -l file -t string --default '' --help "Path of file being installed" \
