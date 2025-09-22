@@ -2,6 +2,7 @@
 
 [ -d "/tmp/.pbash_utils" ] || git clone https://github.com//chahal-p/pbash_utils.git /tmp/.pbash_utils
 pushd /tmp/.pbash_utils > /dev/null
+git checkout .
 git pull
 
 chmod +x ./install.sh
