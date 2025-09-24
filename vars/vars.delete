@@ -1,22 +1,21 @@
 #!/usr/bin/env bash
 
-source pbash-args.sh || { echo "pbash-args.sh is not installed"; exit 1; }
-
 data_path="$HOME/.varsdata"
 
-vars=()
-args=()
-setter_prefix=''
-getter_prefix=''
+parsed=$(pflags parse --name vars.create ---- \
+  -l setter_prefix -t string -r -h 'Prefix for set command' -- \
+  -l getter_prefix -t string --default '' -h '(Optional)\nPrefix for get command.\n  If was not given while creating var then do not provide this flag.' -- \
+  -l var -t string -r -h 'Name of var' ---- "$@") || exit
+pflags printhelp "$parsed" && exit
 
-pbash.args.extract -l setter_prefix: -o setter_prefix -r args -- "$@"
-pbash.args.extract -l getter_prefix: -o getter_prefix -r args -- "$@"
-pbash.args.extract -l var: -o vars -- "${args[@]}" || { pbu.errors.echo "--var is required." ; exit 1; }
+setter_prefix="$(pflags get --name setter_prefix "$parsed")"
+getter_prefix="$(pflags get --name getter_prefix "$parsed")"
+readarray -t vars <<< "$(pflags get --name var "$parsed")"
 
 for var in ${vars[@]}; do
   var_setter="${setter_prefix}${var}"
   var_getter="${getter_prefix}${var}"
-  puninstall "$var_setter"
-  puninstall "$var_getter"
+  puninstall --name "$var_setter"
+  puninstall --name "$var_getter"
   [ -d "$data_path" ] && { echo "Deleting '$data_path/vars.$var'"; rm -f "$data_path/vars.$var"; }
 done

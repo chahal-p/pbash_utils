@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-err=0
-PARSED_OPTIONS=$(getopt -o "" -l "install:" -- "$@" || err=$?)
-[ "$err" == "0" ] || exit $err
 
-eval set -- "$PARSED_OPTIONS"
+function error_echo() {
+  echo -e "\e[01;31m${@}\e[0m"
+}
 
 default_install_input=(
 "aliases"
@@ -11,13 +10,15 @@ default_install_input=(
 "checks"
 "copy"
 "date"
+"docker"
 "errors"
+"exec-bash-script"
 "input"
 "numbers"
 "openssl"
 "peval"
 "pinstall"
-"pssh"
+"ssh"
 "ptmux"
 "python"
 "strings"
@@ -27,24 +28,11 @@ default_install_input=(
 
 install_input=()
 
-while true; do
-  case "$1" in
-    --install)
-      install_input+=( "$2" )
-      shift 2
-      ;;
-    --)
-      shift
-      break
-      ;;
-    *)
-      echo "Unexpected option: $1" >&2
-      exit 1
-      ;;
-  esac
-done
+parsed=$(pflags parse --name "$(basename "$0")" ---- -l install -t string -h 'Utils which needs to be installed, use "all" as value to install all' -r ---- "$@") || exit $?
+pflags printhelp $parsed && exit
 
-[ "${#install_input[@]}" == "0" ] && install_input+=( "${default_install_input[@]}" )
+install_input+=( "$(pflags get -n install "$parsed")" )
+[[ "${#install_input[@]}" == "0" || "${install_input[0]}" == "" ]] && { error_echo "Non-empty --install argument is required."; exit 1; }
 [ "${#install_input[@]}" == "1" ] && [ "${install_input[0]}" == "all" ] && install_input+=( "${default_install_input[@]}" )
 
 install=( __pbu_init__ )
@@ -67,7 +55,7 @@ do
     p="$(realpath "$f")"
     bn="$(basename "$p")"
     [[ "$bn" == "dependencies.txt" || "$bn" == "_complete.sh" ]] && continue
-    bash pinstall/pinstall "$p" || exit
+    bash pinstall/pinstall --file "$p" || exit
   done
   [ -f "$HOME/.local/bin/pbu_complete.sh" ] && [ -f "./$x/_complete.sh" ] && cat ./$x/_complete.sh | grep -v ^#.*$ >> "$HOME/.local/bin/pbu_complete.sh"
 done

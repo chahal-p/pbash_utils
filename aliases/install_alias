@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-key=$1
-shift
+kv="$1"
 
-echo "#!/usr/bin/env bash" > /tmp/$key
-printf "$@ \"\$@\"" >> /tmp/$key
-pinstall /tmp/$key
+value="${kv#*=}"
+key="${kv%"=$value"}"
+
+pinstall --name "$key" --content "#!/bin/bash
+$value \"\$@\"
+"

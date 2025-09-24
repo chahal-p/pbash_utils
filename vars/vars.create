@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
 
-source pbash-args.sh || { echo "pbash-args.sh is not installed"; exit 1; }
-
 data_path="$HOME/.varsdata"
 
 [ -d "$data_path" ] || mkdir "$data_path"
 
-vars=()
-args=()
-setter_prefix=''
-getter_prefix=''
+parsed=$(pflags parse --name vars.create ---- \
+  -l setter_prefix -t string -r -h 'Prefix for set command, a setter command is installed as {setter_prefix}{var}.\n  If setter prefix is set_ and var name is xyz then setter command is set_xyz' -- \
+  -l getter_prefix -t string --default '' -h '(Optional)\nPrefix for get command, a getter command is installed as {getter_prefix}{var}.\n  If getter prefix is get_ and var name is xyz then getter command is get_xyz.\n  This a optional arg if not provided then xyz will be getter command.' -- \
+  -l var -t string -r -h 'Name of var' ---- "$@") || exit
+pflags printhelp "$parsed" && exit
 
-pbash.args.extract -l setter_prefix: -o setter_prefix -r args -- "$@"
-pbash.args.extract -l getter_prefix: -o getter_prefix -r args -- "$@"
-pbash.args.extract -l var: -o vars -- "${args[@]}" || { pbu.errors.echo "--var is required." ; exit 1; }
+setter_prefix="$(pflags get --name setter_prefix "$parsed")"
+getter_prefix="$(pflags get --name getter_prefix "$parsed")"
+readarray -t vars <<< "$(pflags get --name var "$parsed")"
 
 for var in ${vars[@]}; do
   var_setter="${setter_prefix}${var}"
@@ -22,11 +21,11 @@ for var in ${vars[@]}; do
   echo "#!/usr/bin/env bash" > "/tmp/$var_setter"
   echo "echo "\$1" > $data_path/vars.${var}" >> "/tmp/$var_setter"
   echo "echo \'\$1\' is set in ${var}. Use \'$var_getter\' command to get the value." >> "/tmp/$var_setter"
-  pinstall "/tmp/$var_setter" > /dev/null || exit
+  pinstall --quiet --file "/tmp/$var_setter" || exit
 
   [ -f "$data_path/vars.${var}" ] || echo -n > "$data_path/vars.${var}"
 
   echo "#!/usr/bin/env bash" > "/tmp/$var_getter"
   echo "[ -f '$data_path/vars.${var}' ] && cat '$data_path/vars.${var}'" >> "/tmp/$var_getter"
-  pinstall "/tmp/$var_getter" > /dev/null || exit
+  pinstall --quiet --file "/tmp/$var_getter" || exit
 done
