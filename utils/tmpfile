@@ -1,4 +1,4 @@
-#!/bin/envs bash
+#!/usr/bin/env bash
 
 tf="$(mktemp)" || exit
 if [[ -z "$1" ]]; then
