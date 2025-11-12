@@ -4,6 +4,6 @@ tf="$(mktemp)" || exit
 if [[ -z "$1" ]]; then
   cat > "$tf"
 else
-  printf "$1" > "$tf"
+  printf "%s" "$1" > "$tf"
 fi
 printf "%s\n" "$tf"
