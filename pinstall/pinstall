@@ -42,7 +42,7 @@ rp=""
 if [ ! "$content" == "" ]
 then
   rp="/tmp/$name"
-  printf "$content" > "$rp"
+  cat <<< "$content" > "$rp"
 else
   rp="$(realpath "$file")"
 fi
