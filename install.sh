@@ -8,6 +8,7 @@ default_install_input=(
 "aliases"
 "arrays"
 "checks"
+"conversion"
 "copy"
 "date"
 "docker"
