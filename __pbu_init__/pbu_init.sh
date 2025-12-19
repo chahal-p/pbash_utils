@@ -17,6 +17,16 @@ function ___error_echo() {
   echo -e "\e[01;31m${@}\e[0m"
 }
 
+function update-pbash-utils() {
+  [ -d "/tmp/.pbash_utils" ] || git clone https://github.com//chahal-p/pbash_utils.git /tmp/.pbash_utils
+  pushd /tmp/.pbash_utils > /dev/null
+  git checkout .
+  git pull
+  chmod +x ./install.sh
+  ./install.sh --install all
+  popd > /dev/null
+}
+
 pbu.quiet_source pbash-args.sh
 
 source pbu_complete.sh
