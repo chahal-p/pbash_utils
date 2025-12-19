@@ -1,5 +1,6 @@
+# Prerequisite
+  Install pflags from https://github.com/chahal-p/pflags
 # Installation
-  1. Install pflags from https://github.com/chahal-p/pflags
   1. Download a version from https://github.com/chahal-p/pbash_utils/releases
   1. Unzip the file
   1. Navigate to extracted directory
