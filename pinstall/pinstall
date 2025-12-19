@@ -10,7 +10,7 @@ file=()
 
 parsed=$(pflags parse --name "$(basename "$0")" \
   ---- -l name -t string --default '' --help "Name of the installation" \
-    -- -l content -t string --default '' --help "Content needs to be written to the installed file" \
+    -- -l content -t string --default '' --help "Content needs to be written to the installed file.\n  If '-' provided then, content is read from stdin." \
     -- -l file -t string --default '' --help "Path of file being installed" \
     -- -l quiet -t bool --help "Stop printing installation logs" \
   ---- "$@") || exit $?
@@ -39,7 +39,11 @@ sed_args=()
 sed_args+=( "s/$default_bash/$evaluated_bash/1" )
 
 rp=""
-if [ ! "$content" == "" ]
+if [ "$content" == "-" ]
+then
+  rp="/tmp/$name"
+  cat - > "$rp"
+elif [ ! "$content" == "" ]
 then
   rp="/tmp/$name"
   cat <<< "$content" > "$rp"
