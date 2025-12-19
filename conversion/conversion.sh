@@ -16,10 +16,6 @@ function num-dec-to-oct() {
   printf "%o\n" "$1"
 }
 
- alias bin-to-hexdump='xxd -ps'
- 
- alias hexdump-to-bin='xxd -r -p'
-
 if pbu.py.is_installed;
 then
 
