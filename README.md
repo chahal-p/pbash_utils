@@ -1,10 +1,9 @@
 # Installation
   1. Install pflags from https://github.com/chahal-p/pflags
-  1. Clone git repo
+  1. Download a version from https://github.com/chahal-p/pbash_utils/releases
+  1. Unzip the file
+  1. Navigate to extracted directory
      ```sh
-     git clone https://github.com/parveenchahal/pbash_utils.git
-     ```
-  1. ```sh
      cd pbash_utils
      chmod +x install.sh
      ```
