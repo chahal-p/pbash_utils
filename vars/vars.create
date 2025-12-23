@@ -4,7 +4,18 @@ data_path="$HOME/.varsdata"
 
 [ -d "$data_path" ] || mkdir "$data_path"
 
-parsed=$(pflags parse --name vars.create ---- \
+parsed=$(pflags parse --description 'Create a command with provided var name, that can be used to get or set the value.
+
+Example: xyz var created.
+
+Set value by passing arg:
+  xyz $value
+
+Set value by reading from stdin:
+  echo $value | xyz -
+
+Get value:
+  xyz' --name vars.create ---- \
   -l var -t string -r -h 'Name of var' ---- "$@") || exit
 pflags printhelp "$parsed" && exit
 
