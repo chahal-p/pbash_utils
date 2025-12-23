@@ -9,7 +9,8 @@ for var_path in $( ls "$data_path/vars."* 2> /dev/null ); do
   l=$(pbu.numbers.max $l "$(pbu.strings.length "$var")")
 done
 for var_path in $( ls "$data_path/vars."* 2> /dev/null | sort ); do
+  file -i "$var_path" | grep -q "charset=binary" && [[ "$(stat -c "%s" "$var_path")" -gt 0 ]] && continue
   bn="$(basename "$var_path")"
   var="${bn#vars\.}"
-  printf "export '%s'='%s';\n" "${var}" "$(cat "$var_path")"
+  printf "export %s='%s';\n" "${var}" "$(cat "$var_path")"
 done
