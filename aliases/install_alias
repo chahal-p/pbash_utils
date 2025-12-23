@@ -5,6 +5,7 @@ kv="$1"
 value="${kv#*=}"
 key="${kv%"=$value"}"
 
-pinstall --name "$key" --content "#!/bin/bash
-$value \"\$@\"
-"
+pinstall --name "$key" --content - <<'EOF'
+#!/bin/bash
+"$value" "$@"
+EOF
