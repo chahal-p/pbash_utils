@@ -13,7 +13,7 @@ readarray -t vars <<< "$(pflags get --name var "$parsed")"
 for var in ${vars[@]}; do
   pinstall --name "${var}" --content - <<EOF
 #!/usr/bin/env bash
-if [ -z "\$1" ]; then
+if [ "\${#@}" -eq 0 ]; then
   [ -f '${data_path}/vars.${var}' ] && cat '${data_path}/vars.${var}'
 else
   if [[ "\$1" == '-' ]]; then
