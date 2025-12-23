@@ -7,5 +7,5 @@ key="${kv%"=$value"}"
 
 pinstall --name "$key" --content - <<EOF
 #!/bin/bash
-"$value" "\$@"
+$value "\$@"
 EOF
