@@ -20,6 +20,7 @@ default_install_input=(
 "peval"
 "pinstall"
 "ssh"
+"sync"
 "ptmux"
 "python"
 "strings"

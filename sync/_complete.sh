@@ -1,0 +1,1 @@
+complete -W "-f --file -t --timeout" pbu.lock

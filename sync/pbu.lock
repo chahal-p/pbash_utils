@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+internal_args=()
+
+while [[ "${#}" -gt "0" ]]; do
+  if [[ "${1}" == "--" ]]; then
+    shift
+    break
+  fi
+  internal_args+=( "${1}" )
+  shift
+done
+
+parsed=$(pflags parse --name "$0" --usage 'pbu.lock -f  -t  [-h] -- <command>' ---- -s f -l file --type string -r -- -s t -l timeout -t number -r ---- "${internal_args[@]}") || exit
+pflags printhelp $parsed && exit
+
+file="$(pflags get --name file "$parsed")" || exit
+timeout="$(pflags get --name timeout "$parsed")" || exit
+
+if [[ "${#}" -eq "0" ]]; then
+  pbu.errors.echo "No command provided"
+  exit 1
+fi
+
+args=()
+pbu.is_macos && args+=( -t ) || args+=( --timeout )
+args+=( "$timeout" )
+args+=( "$file" )
+
+cmd='flock'
+pbu.is_macos && cmd=lockf
+$cmd "${args[@]}" "${@}"
