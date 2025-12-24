@@ -29,4 +29,8 @@ args+=( "$file" )
 
 cmd='flock'
 pbu.is_macos && cmd=lockf
-$cmd "${args[@]}" "${@}"
+if [[ "${#}" -eq "1" ]]; then
+  $cmd "${args[@]}" -c "${1}"
+else
+  $cmd "${args[@]}" "${@}"
+fi
