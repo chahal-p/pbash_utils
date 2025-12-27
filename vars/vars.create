@@ -24,13 +24,15 @@ readarray -t vars <<< "$(pflags get --name var "$parsed")"
 for var in ${vars[@]}; do
   pinstall --name "${var}" --content - <<EOF
 #!/usr/bin/env bash
+data_file="${data_path}/vars.${var}"
+timeout="$(getconf INT_MAX)"
 if [ "\${#@}" -eq 0 ]; then
-  [ -f '${data_path}/vars.${var}' ] && cat '${data_path}/vars.${var}'
+  [ -f \${data_file} ] && cat \${data_file}
 else
   if [[ "\$1" == '-' ]]; then
-    cat > ${data_path}/vars.${var}
+    pbu.lock -f \${data_file} -t \${timeout} -- "cat > \${data_file}"
   else
-    printf "%s" "\$1" > ${data_path}/vars.${var}
+    cat <<< "\$1" | pbu.lock -f \${data_file} -t \${timeout} -- "cat > \${data_file}"
   fi
   printf "%s\n" "Value is set in ${var}. Use '${var}' without args to get the value."
 fi
