@@ -6,9 +6,9 @@ op="$1"
 shift
 pbu.strings.is_equal "$op" "add" || pbu.strings.is_equal "$op" "subtract" || { pbu.errors.echo "Invalid operation, supported operations are 'add' or 'subtract'"; exit 1; }
 
-base="$(date-to-epoch --out-nanoseconds)"
+base="$(pbu.date.to-epoch --out-nanoseconds)"
 date_str=()
-pbash.args.extract -l 'date:' -o date_str -- "$@" && base="$(date-to-epoch --date "$date_str" --out-nanoseconds)"
+pbash.args.extract -l 'date:' -o date_str -- "$@" && base="$(pbu.date.to-epoch --date "$date_str" --out-nanoseconds)"
 diff=0
 
 value=()
@@ -31,7 +31,7 @@ pbash.args.is_switch_arg_enabled -l 'out-utc' -- "$@" && tz='utc'
 
 if [ "$tz" == "utc" ]
 then
-  date-from-epoch --nanoseconds "$newtime" --out-utc
+  pbu.date.from-epoch --nanoseconds "$newtime" --out-utc
 else
-  date-from-epoch --nanoseconds "$newtime"
+  pbu.date.from-epoch --nanoseconds "$newtime"
 fi

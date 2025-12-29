@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+if [ ${#@} -eq 1 ] && [ "$1" == '-' ]; then
+  pbu.py
+  exit
+fi
+
+cat <<EOF | pbu.py
+$@
+EOF

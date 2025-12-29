@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+pbu.uninstall --name "$1"

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+data_path="$HOME/.varsdata"
+
+parsed=$(pflags parse --name pbu.vars.delete ---- \
+  -l var -t string -r -h 'Name of var' ---- "$@") || exit
+pflags printhelp "$parsed" && exit
+
+readarray -t vars <<< "$(pflags get --name var "$parsed")"
+
+for var in ${vars[@]}; do
+  pbu.uninstall --name "${var}"
+  [ -d "$data_path" ] && { echo "Deleting '$data_path/vars.$var'"; rm -f "$data_path/vars.$var"; }
+done

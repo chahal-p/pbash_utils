@@ -9,7 +9,7 @@
      chmod +x install.sh
      ```
   1. ```sh
-     ./install.sh --install all
+     ./install.sh
      ```
   1. Add below to .bashrc
      ```

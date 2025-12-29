@@ -21,10 +21,10 @@ pbu.quiet_source pbash-args.sh
 
 source pbu_complete.sh
 
-pbu.quiet_source conversion.sh
-pbu.quiet_source docker.sh
-pbu.quiet_source exec-bash-script.sh
-pbu.quiet_source python-scripts.sh
+pbu.quiet_source pbu.conversion.sh
+pbu.quiet_source pbu.docker.sh
+pbu.quiet_source pbu.exec-bash-script.sh
+pbu.quiet_source pbu.python-scripts.sh
 
 function python-venv-activate() {
   test -d ~/.python-venv || { echo 'Creating new venv'; pbu.py -m venv ~/.python-venv;}

@@ -2,13 +2,10 @@
 
 source pbash-args.sh || { echo "pbash-args.sh is not installed"; exit 1; }
 
-type=()
-pbash.args.extract -l 'type:' -o type -- "$@" || { pbu.errors.echo "--type is required option"; exit 1; }
-
 file=()
 pbash.args.extract -s 'f:' -l 'file:' -o file -- "$@" || { read -p "-f|--file (file path): "; file=$REPLY; }
 
 inform=()
 pbash.args.extract -l 'inform:' -o inform -- "$@" || { read -p "--inform (der/pem): "; inform=$REPLY; }
 
-pbu.eval -v -- openssl "$type" -inform "$inform" -in "$file" -text -noout
+pbu.eval -v -- openssl asn1parse -inform "$inform" -in "$file"
