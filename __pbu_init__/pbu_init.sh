@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
-function pathadd() {
+function pbu.pathadd() {
   [[ ":$PATH:" == *":$1:"* ]] || export PATH="$1:$PATH"
 }
 
-function reload-bashrc() {
+function pbu.reload-bashrc() {
   source ~/.bashrc
 }
+alias reload-bashrc='pbu.reload-bashrc'
 
 function pbu.quiet_source() {
   which "$1" > /dev/null || return 1
@@ -26,7 +27,7 @@ pbu.quiet_source pbu.docker.sh
 pbu.quiet_source pbu.exec-bash-script.sh
 pbu.quiet_source pbu.python-scripts.sh
 
-function python-venv-activate() {
+function pbu.python.venv-activate() {
   test -d ~/.python-venv || { echo 'Creating new venv'; pbu.python -m venv ~/.python-venv;}
   source ~/.python-venv/bin/activate
 }
