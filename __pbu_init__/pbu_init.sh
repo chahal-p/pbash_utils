@@ -27,6 +27,6 @@ pbu.quiet_source pbu.exec-bash-script.sh
 pbu.quiet_source pbu.python-scripts.sh
 
 function python-venv-activate() {
-  test -d ~/.python-venv || { echo 'Creating new venv'; pbu.py -m venv ~/.python-venv;}
+  test -d ~/.python-venv || { echo 'Creating new venv'; pbu.python -m venv ~/.python-venv;}
   source ~/.python-venv/bin/activate
 }

@@ -16,25 +16,25 @@ function num-dec-to-oct() {
   printf "%o\n" "$1"
 }
 
-if pbu.py.is_installed;
+if pbu.python.is_installed;
 then
 
 function num-oct-to-bin() {
-  pbu.py.print "bin(int(\"$1\", 8))[2:]"
+  pbu.python.print "bin(int(\"$1\", 8))[2:]"
 }
 
 function num-dec-to-bin() {
-  pbu.py.print "bin(int(\"$1\"))[2:]"
+  pbu.python.print "bin(int(\"$1\"))[2:]"
 }
 
 function num-hex-to-bin() {
-  pbu.py.print "bin(int(\"$1\", 16))[2:]"
+  pbu.python.print "bin(int(\"$1\", 16))[2:]"
   #local input=$(tr '[a-z]' '[A-Z]' <<< $1)
   #echo "obase=2; ibase=16; $input" | bc
 }
 
 function num-bin-to-hex() {
-  pbu.py.exec "
+  pbu.python.exec "
 b = '$1'
 if (len(b) % 4) != 0:
   b = ('0' * (4 - len(b) % 4)) + b
@@ -48,7 +48,7 @@ print(''.join(h))
 
 function num-bin-to-dec() {
   local b="$(pbu.strings.join '' "$@")"
-  pbu.py.exec "
+  pbu.python.exec "
 b = '$b'
 print(int(b, base=2))
   "

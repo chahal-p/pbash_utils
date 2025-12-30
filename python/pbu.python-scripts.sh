@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-alias py-json-tool='pbu.py -m json.tool'
+alias py-json-tool='pbu.python -m json.tool'
 
-if pbu.py.is_installed;
+if pbu.python.is_installed;
 then
 
 function ___pbu_complete-fn-exec-py-script___(){
@@ -30,7 +30,7 @@ function exec-py-script() {
 
   pbu.create_dir_if_does_not_exist ~/.py-script
   pushd ~/.py-script > /dev/null
-  pbu.py "$name.py" "$@"
+  pbu.python "$name.py" "$@"
   popd > /dev/null
 }
 
