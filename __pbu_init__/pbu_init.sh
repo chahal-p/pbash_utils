@@ -18,6 +18,26 @@ function ___error_echo() {
   echo -e "\e[01;31m${@}\e[0m"
 }
 
+function pbu.complete() {
+  local parsed
+  parsed="$(pflags parse --name pbu.complete ---- -s W -t string -r ---- "$@")" || return 1
+  pflags printhelp "$parsed" && return
+  local words="$(pflags get --name W "$parsed")"
+  local name="$(pflags unparsed "$parsed")"
+  [[ -z "$name" ]] && {
+    ___error_echo "Error: No command name provided"
+    return 1
+  }
+  eval "$(cat <<EOF
+function _complete_$name() {
+  local cur="\${COMP_WORDS[COMP_CWORD]}"
+  COMPREPLY=( \$(compgen -W "$words" -- "\$cur") )
+}
+complete -F _complete_$name $name
+EOF
+)"
+}
+
 pbu.quiet_source pbash-args.sh
 
 pbu.quiet_source pbu.conversion.sh
