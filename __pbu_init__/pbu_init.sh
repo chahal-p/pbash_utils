@@ -31,3 +31,9 @@ function pbu.python.venv-activate() {
   test -d ~/.python-venv || { echo 'Creating new venv'; pbu.python -m venv ~/.python-venv;}
   source ~/.python-venv/bin/activate
 }
+
+[ -f "$HOME/.local/share/pbu_sourceable_data" ] && {
+  while IFS=':' read -r name data; do
+    source <(echo "$data" | base64 -d)
+  done < "$HOME/.local/share/pbu_sourceable_data"
+}

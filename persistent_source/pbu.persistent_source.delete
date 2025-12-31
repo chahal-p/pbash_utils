@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+data_file="$HOME/.local/share/pbu_sourceable_data"
+[ -f "$data_file" ] || exit
+
+parsed=$(pflags parse --name "$(basename "$0")"  ---- -s n -l name -t string -r ---- "${@}") || exit
+pflags printhelp "$parsed" && exit
+name="$(pflags get --name name "$parsed")"
+grep -q "^$name:.*$" "$data_file" || exit
+sed -i "/^$name:/d" "$data_file"

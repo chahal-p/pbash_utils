@@ -22,6 +22,7 @@ install=(
 "pbu_install"
 "ssh"
 "sync"
+"persistent_source"
 "ptmux"
 "python"
 "strings"

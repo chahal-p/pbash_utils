@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+[ -d "$HOME/.local/share" ] || mkdir -p "$HOME/.local/share"
+data_file="$HOME/.local/share/pbu_sourceable_data"
+[ -f "$data_file" ] || touch "$data_file"
+
+parsed=$(pflags parse --name "$(basename "$0")"  ---- -s f -l file -t string -r -- -s n -l name -t string -r ---- "${@}") || exit
+pflags printhelp "$parsed" && exit
+name="$(pflags get --name name "$parsed")"
+file="$(pflags get --name file "$parsed")"
+data="$(cat "$file" | base64 -w 0)"
+sed -i "/^$name:/d" "$data_file"
+cat <<< "$name:$data" | tee -a "$data_file" > /dev/null
+sort -t ':' -k 1,1 "$data_file" -o "$data_file"
