@@ -41,5 +41,7 @@ do
     [[ "$bn" == "_complete.sh" ]] && continue
     bash pbu_install/pbu.install --file "$p" || exit
   done
-  [ -f "$HOME/.local/bin/pbu_complete.sh" ] && [ -f "./$x/_complete.sh" ] && cat ./$x/_complete.sh | grep -v ^#.*$ >> "$HOME/.local/bin/pbu_complete.sh"
+  [ -f "./$x/_complete.sh" ] && {
+    cat ./$x/_complete.sh | grep -v ^#.*$ | bash persistent_source/pbu.persistent_source.add --name "_pbu_complete_$x" --file - || exit
+  }
 done
