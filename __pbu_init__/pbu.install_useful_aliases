@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+parsed=$(pflags parse --name "$(basename "$0")" --description "Install useful aliases of commands without pbu namespace" ---- ---- "$@") || exit
+pflags printhelp $parsed && exit
+
+pbu.install_alias bin-to-hex=pbu.bin-to-hex
+
+pbu.install_alias cat-which=pbu.cat.which
+
+echo 'complete -F _complete_pbu.date.from-epoch date-from-epoch' | pbu.persistent_source.add -n _complete_date-from-epoch -f -
+pbu.install_alias date-from-epoch=pbu.date.from-epoch
+
+echo 'complete -F _complete_pbu.date.to-epoch date-to-epoch' | pbu.persistent_source.add -n _complete_date-to-epoch -f -
+pbu.install_alias date-to-epoch=pbu.date.to-epoch
+
+pbu.install_alias evalc=pbu.eval.confirm
+
+pbu.install_alias hex-to-bin=pbu.hex-to-bin
+
+pbu.install_alias less-which=pbu.less.which
+
+pbu.install_alias py-print=pbu.py.print
+
+pbu.install_alias vars-print=pbu.vars.print
+
+pbu.install_alias vim-which=pbu.vim.which
