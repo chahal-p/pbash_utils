@@ -9,6 +9,9 @@ pflags printhelp "$parsed" && exit
 name="$(pflags get --name name "$parsed")"
 file="$(pflags get --name file "$parsed")"
 data="$(cat "$file" | base64 -w 0)"
-sed -i "/^$name:/d" "$data_file"
+
+data_base64=$(cat "$data_file" | base64 -w 0)
+echo $data_base64 | base64 -d | grep -v "^$name:.*" | tee "$data_file" > /dev/null
+
 cat <<< "$name:$data" | tee -a "$data_file" > /dev/null
 sort -t ':' -k 1,1 "$data_file" -o "$data_file"
