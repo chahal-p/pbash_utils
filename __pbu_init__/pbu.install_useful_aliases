@@ -13,7 +13,7 @@ pbu.install_alias hex-to-bin=pbu.hex-to-bin
 
 pbu.install_alias less-which=pbu.less.which
 
-pbu.install_alias py-print=pbu.py.print
+pbu.install_alias py-print=pbu.python.print
 
 pbu.install_alias vars-print=pbu.vars.print
 
