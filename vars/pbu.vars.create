@@ -30,9 +30,9 @@ if [ "\${#@}" -eq 0 ]; then
   [ -f \${data_file} ] && cat \${data_file}
 else
   if [[ "\$1" == '-' ]]; then
-    pbu.lock -f \${data_file} -t \${timeout} -- "cat > \${data_file}"
+    pbu.lock -f \${data_file} -t \${timeout} -- tee \${data_file} > /dev/null
   else
-    cat <<< "\$1" | pbu.lock -f \${data_file} -t \${timeout} -- "cat > \${data_file}"
+    pbu.lock -f \${data_file} -t \${timeout} -- tee \${data_file} <<< "\$1" > /dev/null
   fi
   printf "%s\n" "Value is set in ${var}. Use '${var}' without args to get the value."
 fi

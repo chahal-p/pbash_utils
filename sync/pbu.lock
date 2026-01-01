@@ -23,14 +23,10 @@ if [[ "${#}" -eq "0" ]]; then
 fi
 
 args=()
-pbu.is_macos && args+=( -t ) || args+=( --timeout )
+pbu.is_macos && args+=( -k -t ) || args+=( --timeout )
 args+=( "$timeout" )
 args+=( "$file" )
 
 cmd='flock'
 pbu.is_macos && cmd=lockf
-if [[ "${#}" -eq "1" ]]; then
-  $cmd "${args[@]}" -c "${1}"
-else
-  $cmd "${args[@]}" "${@}"
-fi
+$cmd "${args[@]}" "${@}"
