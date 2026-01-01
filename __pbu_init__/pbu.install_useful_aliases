@@ -29,8 +29,8 @@ pbu.install_alias date-from-epoch=pbu.date.from-epoch
 echo 'complete -F _complete_pbu.date.local-to-utc date-local-to-utc' | pbu.persistent_source.add -n _complete_date-local-to-utc -f -
 pbu.install_alias date-local-to-utc=pbu.date.local-to-utc
 
-echo 'complete -F _complete_pbu.date.sub date-sub' | pbu.persistent_source.add -n _complete_date-sub -f -
-pbu.install_alias date-sub=pbu.date.sub
+echo 'complete -F _complete_pbu.date.subtract date-subtract' | pbu.persistent_source.add -n _complete_date-subtract -f -
+pbu.install_alias date-subtract=pbu.date.subtract
 
 echo 'complete -F _complete_pbu.date.to-epoch date-to-epoch' | pbu.persistent_source.add -n _complete_date-to-epoch -f -
 pbu.install_alias date-to-epoch=pbu.date.to-epoch
