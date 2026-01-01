@@ -7,12 +7,6 @@ pbu.install_alias bin-to-hex=pbu.bin-to-hex
 
 pbu.install_alias cat-which=pbu.cat.which
 
-echo 'complete -F _complete_pbu.date.from-epoch date-from-epoch' | pbu.persistent_source.add -n _complete_date-from-epoch -f -
-pbu.install_alias date-from-epoch=pbu.date.from-epoch
-
-echo 'complete -F _complete_pbu.date.to-epoch date-to-epoch' | pbu.persistent_source.add -n _complete_date-to-epoch -f -
-pbu.install_alias date-to-epoch=pbu.date.to-epoch
-
 pbu.install_alias evalc=pbu.eval.confirm
 
 pbu.install_alias hex-to-bin=pbu.hex-to-bin
@@ -24,3 +18,53 @@ pbu.install_alias py-print=pbu.py.print
 pbu.install_alias vars-print=pbu.vars.print
 
 pbu.install_alias vim-which=pbu.vim.which
+
+############ Date ############
+echo 'complete -F _complete_pbu.date.add date-add' | pbu.persistent_source.add -n _complete_date-add -f -
+pbu.install_alias date-add=pbu.date.add
+
+echo 'complete -F _complete_pbu.date.from-epoch date-from-epoch' | pbu.persistent_source.add -n _complete_date-from-epoch -f -
+pbu.install_alias date-from-epoch=pbu.date.from-epoch
+
+echo 'complete -F _complete_pbu.date.local-to-utc date-local-to-utc' | pbu.persistent_source.add -n _complete_date-local-to-utc -f -
+pbu.install_alias date-local-to-utc=pbu.date.local-to-utc
+
+echo 'complete -F _complete_pbu.date.sub date-sub' | pbu.persistent_source.add -n _complete_date-sub -f -
+pbu.install_alias date-sub=pbu.date.sub
+
+echo 'complete -F _complete_pbu.date.to-epoch date-to-epoch' | pbu.persistent_source.add -n _complete_date-to-epoch -f -
+pbu.install_alias date-to-epoch=pbu.date.to-epoch
+
+echo 'complete -F _complete_pbu.date.utc-to-local date-utc-to-local' | pbu.persistent_source.add -n _complete_date-utc-to-local -f -
+pbu.install_alias date-utc-to-local=pbu.date.utc-to-local
+
+############ Openssl ############
+echo 'complete -F _complete_pbu.openssl.convert-x509-der-to-pem openssl-convert-x509-der-to-pem' | pbu.persistent_source.add -n _complete_openssl-convert-x509-der-to-pem -f -
+pbu.install_alias openssl-convert-x509-der-to-pem=pbu.openssl.convert-x509-der-to-pem
+
+echo 'complete -F _complete_pbu.openssl.convert-x509-pem-to-der openssl-convert-x509-pem-to-der' | pbu.persistent_source.add -n _complete_openssl-convert-x509-pem-to-der -f -
+pbu.install_alias openssl-convert-x509-pem-to-der=pbu.openssl.convert-x509-pem-to-der
+
+echo 'complete -F _complete_pbu.openssl.decode-asn1 openssl-decode-asn1' | pbu.persistent_source.add -n _complete_openssl-decode-asn1 -f -
+pbu.install_alias openssl-decode-asn1=pbu.openssl.decode-asn1
+
+echo 'complete -F _complete_pbu.openssl.decode-cert openssl-decode-cert' | pbu.persistent_source.add -n _complete_openssl-decode-cert -f -
+pbu.install_alias openssl-decode-cert=pbu.openssl.decode-cert
+
+echo 'complete -F _complete_pbu.openssl.decode-crl openssl-decode-crl' | pbu.persistent_source.add -n _complete_openssl-decode-crl -f -
+pbu.install_alias openssl-decode-crl=pbu.openssl.decode-crl
+
+echo 'complete -F _complete_pbu.openssl.decode-csr openssl-decode-csr' | pbu.persistent_source.add -n _complete_openssl-decode-csr -f -
+pbu.install_alias openssl-decode-csr=pbu.openssl.decode-csr
+
+echo 'complete -F _complete_pbu.openssl.decode-key openssl-decode-key' | pbu.persistent_source.add -n _complete_openssl-decode-key -f -
+pbu.install_alias openssl-decode-key=pbu.openssl.decode-key
+
+echo 'complete -F _complete_pbu.openssl.publickey-extract openssl-publickey-extract' | pbu.persistent_source.add -n _complete_openssl-publickey-extract -f -
+pbu.install_alias openssl-publickey-extract=pbu.openssl.publickey-extract
+
+echo 'complete -F _complete_pbu.openssl.signature-extract openssl-signature-extract' | pbu.persistent_source.add -n _complete_openssl-signature-extract -f -
+pbu.install_alias openssl-signature-extract=pbu.openssl.signature-extract
+
+echo 'complete -F _complete_pbu.openssl.tbs-extract openssl-tbs-extract' | pbu.persistent_source.add -n _complete_openssl-tbs-extract -f -
+pbu.install_alias openssl-tbs-extract=pbu.openssl.tbs-extract
