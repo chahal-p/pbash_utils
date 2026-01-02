@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
-if [ ${#@} -eq 1 ] && [ "$1" == '-' ]; then
-  pbu.python
+
+if [ "$1" == '-' ]; then
+  pbu.python "$@"
   exit
 fi
 
-cat <<EOF | pbu.python
-$@
+code="$1"
+shift
+cat <<EOF | pbu.python - "$@"
+$code
 EOF
