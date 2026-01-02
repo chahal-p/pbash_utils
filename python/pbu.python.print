@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-
-pbu.python.exec "print($@)"
+pbu.python.exec "print($(pbu.strings.join ' ' "$@"))"
