@@ -20,7 +20,6 @@ function ___error_echo() {
 
 pbu.quiet_source pbash-args.sh
 
-pbu.quiet_source pbu.conversion.sh
 pbu.quiet_source pbu.docker.sh
 pbu.quiet_source pbu.exec-bash-script.sh
 pbu.quiet_source pbu.python-scripts.sh

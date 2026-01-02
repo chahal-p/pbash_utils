@@ -7,6 +7,8 @@ pbu.install_alias bin-to-hex=pbu.bin-to-hex
 
 pbu.install_alias cat-which=pbu.cat.which
 
+pbu.install_alias copy-to-clipboard=pbu.copy-to-clipboard
+
 pbu.install_alias evalc=pbu.eval.confirm
 
 pbu.install_alias hex-to-bin=pbu.hex-to-bin
