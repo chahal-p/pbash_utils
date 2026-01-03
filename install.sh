@@ -11,7 +11,6 @@ install=(
 "conversion"
 "copy"
 "date"
-"docker"
 "errors"
 "eval"
 "exec-bash-script"
