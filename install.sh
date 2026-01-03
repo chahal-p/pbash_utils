@@ -44,3 +44,4 @@ do
     cat ./$x/_complete.sh | grep -v ^#.*$ | bash persistent_source/pbu.persistent_source.add --name "_pbu_complete_$x" --file - || exit
   }
 done
+exit 0
