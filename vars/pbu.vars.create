@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-data_path="$HOME/.varsdata"
+data_path_str="\$HOME/.varsdata"
+data_path="$(eval echo "$data_path_str")"
 
 [ -d "$data_path" ] || mkdir "$data_path"
 
@@ -24,7 +25,7 @@ readarray -t vars <<< "$(pflags get --name var "$parsed")"
 for var in ${vars[@]}; do
   pbu.install --name "${var}" --content - <<EOF
 #!/usr/bin/env bash
-data_file="${data_path}/vars.${var}"
+data_file="${data_path_str}/vars.${var}"
 timeout="$(getconf INT_MAX)"
 if [ "\${#@}" -eq 0 ]; then
   [ -f \${data_file} ] && cat \${data_file}
