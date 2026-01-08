@@ -2,8 +2,17 @@
 
 data_file="$HOME/.local/share/pbu_sourceable_data"
 [ -f "$data_file" ] || exit
+max_index_str_size=5 # for Index header
 
-while IFS=':' read -r name data; do
-  printf '%s\n' "$name"
+while IFS=':' read -r name index data; do
+  [[ "$index" == 2147483647 ]] && index='-'
+  max_index_str_size="$((${#index} > max_index_str_size ? ${#index} : max_index_str_size))"
 done < "$data_file"
 
+header_printed=false
+while IFS=':' read -r name index data; do
+  [ "$header_printed" = false ] && printf '%*s  %s\n' "$max_index_str_size" 'Index' 'Name' && printf '%*s  %s\n' "$max_index_str_size" '-----' '----' && header_printed=true
+  [ -z "$name" ] && continue
+  [[ "$index" == 2147483647 ]] && index='-'
+  printf '%*s  %s\n' "$max_index_str_size" "$index" "$name"
+done < "$data_file"

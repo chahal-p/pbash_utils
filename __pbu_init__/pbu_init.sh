@@ -29,8 +29,4 @@ function pbu.python.venv-activate() {
   source ~/.python-venv/bin/activate
 }
 
-[ -f "$HOME/.local/share/pbu_sourceable_data" ] && {
-  while IFS=':' read -r name data; do
-    source <(echo "$data" | base64 -d)
-  done < "$HOME/.local/share/pbu_sourceable_data"
-}
+source <(pbu.persistent_source.print_sourceable)

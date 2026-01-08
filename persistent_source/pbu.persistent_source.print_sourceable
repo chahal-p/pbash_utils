@@ -3,7 +3,7 @@
 data_file="$HOME/.local/share/pbu_sourceable_data"
 [ -f "$data_file" ] || exit
 
-while IFS=':' read -r name data; do
+while IFS=':' read -r name index data; do
   echo "# Script from: $name"
   base64 -d <<< "$data"
   echo ""

@@ -8,5 +8,5 @@ pflags printhelp "$parsed" && exit
 name="$(pflags get --name name "$parsed")"
 grep -q "^$name:.*$" "$data_file" || exit
 data="$(grep "^$name:.*$" "$data_file")"
-data="${data#*:}"
+IFS=':' read -r name index data <<< "$data"
 echo "${data}" | base64 -d
