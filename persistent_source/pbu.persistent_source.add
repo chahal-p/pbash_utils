@@ -4,7 +4,7 @@
 data_file="$HOME/.local/share/pbu_sourceable_data"
 [ -f "$data_file" ] || touch "$data_file"
 
-parsed=$(pflags parse --name "$(basename "$0")"  ---- -s f -l file -t string -r -- -s n -l name -t string -r -- -s i -l index -t number --default "" ---- "${@}") || exit
+parsed=$(pflags parse --name "$(basename "$0")"  ---- -s f -l file -t string -r -- -s n -l name -t string -r --regex "^[a-zA-Z0-9_-]+$" -- -s i -l index -t number --default "" ---- "${@}") || exit
 pflags printhelp "$parsed" && exit
 name="$(pflags get --name name "$parsed")"
 file="$(pflags get --name file "$parsed")"
