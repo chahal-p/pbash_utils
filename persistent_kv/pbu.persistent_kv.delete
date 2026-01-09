@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+parsed=$(pflags parse --name "$(basename "$0")" ---- \
+  -s n -l namespace -t string --regex '^[a-zA-Z0-9_-]+$' -r -- \
+  -s k -l key -t string --regex '^[a-zA-Z0-9_-]+$' -- \
+  -l delete_namespace -t bool --default "false" ---- "$@") || exit
+pflags printhelp $parsed && exit 0
+
+namespace="$(pflags get $parsed -n namespace)"
+delete_namespace="$(pflags get $parsed -n delete_namespace)"
+key="$(pflags get $parsed -n key)"
+
+if [ "$delete_namespace" = "true" ]; then
+  _pbu_persistent_kv delete "$namespace"
+else
+  [ -z "$key" ] && { echo "Error: --delete_namespace need to be set to delete the namespace" >&2; exit 2; }
+  _pbu_persistent_kv delete "$namespace" "$key"
+fi

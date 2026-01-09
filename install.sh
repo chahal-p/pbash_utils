@@ -16,6 +16,7 @@ install=(
 "exec-bash-script"
 "input"
 "install_alias"
+"persistent_kv"
 "numbers"
 "openssl"
 "pbu_install"

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+parsed=$(pflags parse --name "$(basename "$0")" ---- \
+  -s n -l namespace -t string --regex '^[a-zA-Z0-9_-]+$' -r -- \
+  -s k -l key -t string --regex '^[a-zA-Z0-9_-]+$' -r -- \
+  -s v -l value -t string ---- "$@") || exit
+pflags printhelp $parsed && exit 0
+
+read_stdin=false
+namespace="$(pflags get $parsed -n namespace)"
+key="$(pflags get $parsed -n key)"
+value="$(pflags get $parsed -n value)" || read_stdin=true
+
+if [ "$read_stdin" = true ]; then
+  cat | _pbu_persistent_kv set "$namespace" "$key"
+else
+  cat <<< "$value" | _pbu_persistent_kv set "$namespace" "$key"
+fi

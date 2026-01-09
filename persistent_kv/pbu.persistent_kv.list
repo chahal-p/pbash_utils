@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+parsed=$(pflags parse --name "$(basename "$0")" ---- \
+  -s n -l namespace -t string --regex '^[a-zA-Z0-9_-]+$' ---- "$@") || exit
+pflags printhelp $parsed && exit 0
+
+args=()
+namespace="$(pflags get $parsed -n namespace)" && args+=("$namespace")
+
+_pbu_persistent_kv list "${args[@]}"
