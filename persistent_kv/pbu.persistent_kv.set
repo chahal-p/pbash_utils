@@ -12,7 +12,7 @@ key="$(pflags get $parsed -n key)"
 value="$(pflags get $parsed -n value)" || read_stdin=true
 
 if [ "$read_stdin" = true ]; then
-  cat | _pbu_persistent_kv set "$namespace" "$key"
+  cat | _pbu.persistent_kv set "$namespace" "$key"
 else
-  cat <<< "$value" | _pbu_persistent_kv set "$namespace" "$key"
+  cat <<< "$value" | _pbu.persistent_kv set "$namespace" "$key"
 fi

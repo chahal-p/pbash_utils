@@ -7,4 +7,4 @@ pflags printhelp $parsed && exit 0
 args=()
 namespace="$(pflags get $parsed -n namespace)" && args+=("$namespace")
 
-_pbu_persistent_kv list "${args[@]}"
+_pbu.persistent_kv list "${args[@]}"

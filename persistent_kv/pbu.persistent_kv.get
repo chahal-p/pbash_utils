@@ -8,4 +8,4 @@ pflags printhelp $parsed && exit 0
 namespace="$(pflags get $parsed -n namespace)"
 key="$(pflags get $parsed -n key)"
 
-_pbu_persistent_kv get "$namespace" "$key"
+_pbu.persistent_kv get "$namespace" "$key"

@@ -11,8 +11,8 @@ delete_namespace="$(pflags get $parsed -n delete_namespace)"
 key="$(pflags get $parsed -n key)"
 
 if [ "$delete_namespace" = "true" ]; then
-  _pbu_persistent_kv delete "$namespace"
+  _pbu.persistent_kv delete "$namespace"
 else
   [ -z "$key" ] && { echo "Error: --delete_namespace need to be set to delete the namespace" >&2; exit 2; }
-  _pbu_persistent_kv delete "$namespace" "$key"
+  _pbu.persistent_kv delete "$namespace" "$key"
 fi
