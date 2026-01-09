@@ -20,9 +20,9 @@ function ___error_echo() {
 
 pbu.quiet_source pbash-args.sh
 
-pbu.quiet_source pbu.docker.sh
-pbu.quiet_source pbu.exec-bash-script.sh
-pbu.quiet_source pbu.python-scripts.sh
+pbu.quiet_source _pbu.completes.sh
+pbu.quiet_source _pbu.exec-bash-script.sh
+pbu.quiet_source _pbu.python-scripts.sh
 
 function pbu.python.venv-activate() {
   test -d ~/.python-venv || { echo 'Creating new venv'; pbu.python -m venv ~/.python-venv;}

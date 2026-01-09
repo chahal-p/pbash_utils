@@ -31,6 +31,8 @@ install=(
 "__exported_aliases__"
 )
 
+echo '#!/usr/bin/env bash' > /tmp/_pbu.completes.sh
+
 for x in "${install[@]}"
 do
   for f in "./$x"/*
@@ -42,7 +44,8 @@ do
     bash pbu_install/pbu.install --file "$p" || exit
   done
   [ -f "./$x/_complete.sh" ] && {
-    cat ./$x/_complete.sh | grep -v ^#.*$ | bash persistent_source/pbu.persistent_source.add --name "_pbu_complete_$x" --file - || exit
+    cat ./$x/_complete.sh | grep -v ^#.*$ >> /tmp/_pbu.completes.sh
   }
 done
+bash pbu_install/pbu.install --file /tmp/_pbu.completes.sh || exit
 exit 0
