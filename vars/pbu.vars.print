@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 readarray -t vars <<< "$(pbu.persistent_kv.list --namespace _pbu_vars)"
+[[ "${#vars[@]}" == "1" && "${vars[0]}" == "" ]] && exit 0
 
 l=0
 for var in "${vars[@]}"; do
