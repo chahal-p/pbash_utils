@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-readarray -t vars <<< "$(pbu.persistent_kv.list --namespace _pbu_vars)"
-[[ "${#vars[@]}" == "1" && "${vars[0]}" == "" ]] && exit 0
+readarray -t vars < <(_pbu.persistent_kv list _pbu_vars)
 
 for var in "${vars[@]}"; do
-  value="$(pbu.persistent_kv.get --namespace _pbu_vars --key "${var}" | base64 -w 0)"
-  [ -z "$value" ] || { (echo "${value}" | base64 -d | head -c 10 | file -i - | grep -q "charset=binary") && continue; }
-  printf "export %s='%s';\n" "${var}" "$(echo "${value}" | base64 -d)"
+  value="$(_pbu.persistent_kv get _pbu_vars "${var}")"
+  # [ -z "$value" ] || { (echo "${value}" | base64 -d | head -c 10 | file -i - | grep -q "charset=binary") && continue; }
+  printf "export %s='%s';\n" "${var}" "${value}"
 done

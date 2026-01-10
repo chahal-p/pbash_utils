@@ -1,10 +1,23 @@
 #!/usr/bin/env bash
 
-data_file="$HOME/.local/share/pbu_sourceable_data"
-[ -f "$data_file" ] || exit
+readarray -t names < <(_pbu.persistent_kv list _pbu_persistent_source_data)
 
-while IFS=':' read -r name index data; do
+index_names=()
+
+for name in "${names[@]}"; do
+  index="$(_pbu.persistent_kv get _pbu_persistent_source_index "$name")"
+  size="${#index}"
+  [[ "$index" == 2147483647 ]] && size=1
+  max_index_str_size="$((${size} > max_index_str_size ? ${size} : max_index_str_size))"
+
+  index_names+=("$index:$name")
+done
+
+IFS=$'\n' sorted_array=($(printf "%s\n" "${index_names[@]}" | sort -t: -k1n,1n -k2,2))
+
+for index_name in "${sorted_array[@]}"; do
+  IFS=':' read -r index name <<< "$index_name"
   echo "# Script from: $name"
-  base64 -d <<< "$data"
+  _pbu.persistent_kv get _pbu_persistent_source_data "$name"
   echo ""
-done < "$data_file"
+done

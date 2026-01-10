@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-readarray -t vars <<< "$(pbu.persistent_kv.list --namespace _pbu_vars)"
-[[ "${#vars[@]}" == "1" && "${vars[0]}" == "" ]] && exit 0
+readarray -t vars < <(_pbu.persistent_kv list _pbu_vars)
 
 l=0
 for var in "${vars[@]}"; do
@@ -12,10 +11,9 @@ MAX_LEN=80
 READ_LEN=$(( MAX_LEN + 1 ))
 
 for var in "${vars[@]}"; do
-  value="$(pbu.persistent_kv.get --namespace _pbu_vars --key "${var}" | head -c $READ_LEN | base64 -w 0)"
-  [ -z "$value" ] ||  { (echo "${value}" | base64 -d | file -i - | grep -q "charset=binary") && value="<binary data>"; }
-  [ "$value" == "<binary data>" ] || value="$(echo "${value}" | base64 -d)"
-
+  value="$(_pbu.persistent_kv get _pbu_vars "${var}" | head -c $READ_LEN)"
+  # [ -z "$value" ] ||  { (echo "${value}" | base64 -d | file -i - | grep -q "charset=binary") && value="<binary data>"; }
+  # [ "$value" == "<binary data>" ] || value="$(echo "${value}" | base64 -d)"
   [[ "${#value}" -gt $MAX_LEN ]] && value="${value:0:$MAX_LEN}...<truncated>..."
   printf "%-${l}s : '%-0s'\n" "${var}" "${value}"
 done

@@ -8,5 +8,5 @@ readarray -t vars <<< "$(pflags get --name var "$parsed")"
 
 for var in ${vars[@]}; do
   pbu.uninstall --name "${var}"
-  pbu.persistent_kv.delete --namespace _pbu_vars --key "${var}"
+  _pbu.persistent_kv delete _pbu_vars "${var}"
 done

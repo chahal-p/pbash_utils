@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-pbu.persistent_kv.list --namespace _pbu_vars | while read -r var; do
+_pbu.persistent_kv list _pbu_vars | while read -r var; do
   pbu.vars.create --var "${var}" || exit
 done

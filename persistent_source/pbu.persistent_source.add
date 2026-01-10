@@ -17,9 +17,5 @@ fi
 
 [ -z "$index" ] && index=2147483647
 
-data="$(cat "$file" | base64 -w 0)"
-data_base64=$(cat "$data_file" | base64 -w 0)
-echo $data_base64 | base64 -d | grep -v "^$name:.*" | tee "$data_file" > /dev/null
-
-cat <<< "$name:$index:$data" | tee -a "$data_file" > /dev/null
-sort -t ':' -k 2n,2 -k 1,1 "$data_file" -o "$data_file"
+echo $index | _pbu.persistent_kv set _pbu_persistent_source_index "$name"
+cat "$file" | _pbu.persistent_kv set _pbu_persistent_source_data "$name"

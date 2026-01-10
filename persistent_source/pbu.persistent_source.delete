@@ -6,5 +6,6 @@ data_file="$HOME/.local/share/pbu_sourceable_data"
 parsed=$(pflags parse --name "$(basename "$0")"  ---- -s n -l name -t string -r --regex "^[a-zA-Z0-9_-]+$" ---- "${@}") || exit
 pflags printhelp "$parsed" && exit
 name="$(pflags get --name name "$parsed")"
-grep -q "^$name:.*$" "$data_file" || exit
-sed -i "/^$name:/d" "$data_file"
+
+_pbu.persistent_kv delete _pbu_persistent_source_data "$name"
+_pbu.persistent_kv delete _pbu_persistent_source_index "$name"

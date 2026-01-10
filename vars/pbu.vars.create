@@ -21,15 +21,15 @@ for var in ${vars[@]}; do
   pbu.install --name "${var}" --content - <<EOF
 #!/usr/bin/env bash
 if [ "\${#@}" -eq 0 ]; then
-  pbu.persistent_kv.get --namespace _pbu_vars --key "${var}"
+  _pbu.persistent_kv get _pbu_vars "${var}"
 else
   if [[ "\$1" == '-' ]]; then
-    pbu.persistent_kv.set --namespace _pbu_vars --key "${var}"
+    _pbu.persistent_kv set _pbu_vars "${var}"
   else
-    pbu.persistent_kv.set --namespace _pbu_vars --key "${var}" --value "\$1"
+    printf "%s" "\$1" | _pbu.persistent_kv set _pbu_vars "${var}"
   fi
   printf "%s\n" "Value is set in ${var}. Use '${var}' without args to get the value."
 fi
 EOF
-  echo -n | pbu.persistent_kv.set --namespace _pbu_vars --key "${var}"
+  echo -n | _pbu.persistent_kv set _pbu_vars "${var}"
 done
