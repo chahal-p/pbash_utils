@@ -34,3 +34,4 @@ EOF
   _pbu.persistent_kv get _pbu_vars "${var}" > /dev/null 2>&1
   [ $? -eq 40 ] && echo -n | _pbu.persistent_kv set _pbu_vars "${var}"
 done
+exit 0
