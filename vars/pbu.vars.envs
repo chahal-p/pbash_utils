@@ -1,16 +1,9 @@
 #!/usr/bin/env bash
 
-data_path="$HOME/.varsdata"
+readarray -t vars <<< "$(pbu.persistent_kv.list --namespace _pbu_vars)"
 
-l=0
-for var_path in $( ls "$data_path/vars."* 2> /dev/null ); do
-  bn="$(basename "$var_path")"
-  var="${bn#vars\.}"
-  l=$(pbu.numbers.max $l "$(pbu.strings.length "$var")")
-done
-for var_path in $( ls "$data_path/vars."* 2> /dev/null | sort ); do
-  file -i "$var_path" | grep -q "charset=binary" && [[ "$(stat -c "%s" "$var_path")" -gt 0 ]] && continue
-  bn="$(basename "$var_path")"
-  var="${bn#vars\.}"
-  printf "export %s='%s';\n" "${var}" "$(cat "$var_path")"
+for var in "${vars[@]}"; do
+  value="$(pbu.persistent_kv.get --namespace _pbu_vars --key "${var}" | base64 -w 0)"
+  [ -z "$value" ] || { (echo "${value}" | base64 -d | head -c 10 | file -i - | grep -q "charset=binary") && continue; }
+  printf "export %s='%s';\n" "${var}" "$(echo "${value}" | base64 -d)"
 done

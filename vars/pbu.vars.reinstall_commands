@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
-for x in `ls -1 $HOME/.varsdata/`; do
-  pbu.vars.create --var "${x#vars.}" || exit
+
+pbu.persistent_kv.list --namespace _pbu_vars | while read -r var; do
+  pbu.vars.create --var "${var}" || exit
 done

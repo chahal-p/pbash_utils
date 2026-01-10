@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-data_path_str="\$HOME/.varsdata"
-data_path="$(eval echo "$data_path_str")"
-
-[ -d "$data_path" ] || mkdir "$data_path"
-
 parsed=$(pflags parse --description 'Create a command with provided var name, that can be used to get or set the value.
 
 Example: xyz var created.
@@ -25,18 +20,16 @@ readarray -t vars <<< "$(pflags get --name var "$parsed")"
 for var in ${vars[@]}; do
   pbu.install --name "${var}" --content - <<EOF
 #!/usr/bin/env bash
-data_file="${data_path_str}/vars.${var}"
-timeout="$(getconf INT_MAX)"
 if [ "\${#@}" -eq 0 ]; then
-  [ -f \${data_file} ] && cat \${data_file}
+  pbu.persistent_kv.get --namespace _pbu_vars --key "${var}"
 else
   if [[ "\$1" == '-' ]]; then
-    pbu.lock -f \${data_file} -t \${timeout} -- tee \${data_file} > /dev/null
+    pbu.persistent_kv.set --namespace _pbu_vars --key "${var}"
   else
-    pbu.lock -f \${data_file} -t \${timeout} -- tee \${data_file} <<< "\$1" > /dev/null
+    pbu.persistent_kv.set --namespace _pbu_vars --key "${var}" --value "\$1"
   fi
   printf "%s\n" "Value is set in ${var}. Use '${var}' without args to get the value."
 fi
 EOF
-
+  echo -n | pbu.persistent_kv.set --namespace _pbu_vars --key "${var}"
 done
