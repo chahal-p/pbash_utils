@@ -14,5 +14,5 @@
   1. Add below to .bashrc
      ```
      [[ ":$PATH:" == *":$HOME/.local/bin:"* ]] || export PATH="$PATH:$HOME/.local/bin"
-     source pbu_init.sh
+     source pbu_init.bash
      ```
