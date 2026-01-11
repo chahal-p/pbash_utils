@@ -1,5 +1,20 @@
 #!/usr/bin/env bash
 
+if [[ "${BASH_VERSINFO[0]}" -lt 5 ]]
+then
+  echo 'bash version 5 or higher is required for pbash_utils'
+  return
+fi
+
+IFS=' ' read -r _ python_version <<< $(python3 -V)
+IFS='.' read -r python_version_major python_version_minor python_version_patch <<< $python_version
+
+if [[ "${python_version_major}" -lt 3 || "${python_version_minor}" -lt 11 ]]
+then
+  echo 'python version 3.11 or higher is required for pbash_utils'
+  return
+fi
+
 function error_echo() {
   echo -e "\e[01;31m${@}\e[0m"
 }
@@ -13,7 +28,6 @@ install=(
 "date"
 "errors"
 "eval"
-"exec-bash-script"
 "input"
 "install_alias"
 "persistent_kv"
