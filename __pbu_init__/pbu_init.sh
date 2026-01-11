@@ -14,15 +14,7 @@ function pbu.quiet_source() {
   source "$1"
 }
 
-function ___error_echo() {
-  echo -e "\e[01;31m${@}\e[0m"
-}
-
-pbu.quiet_source pbash-args.sh
-
 pbu.quiet_source _pbu.completes.sh
-pbu.quiet_source _pbu.exec-bash-script.sh
-pbu.quiet_source _pbu.python-scripts.sh
 
 function pbu.python.venv-activate() {
   test -d ~/.python-venv || { echo 'Creating new venv'; pbu.python -m venv ~/.python-venv;}
