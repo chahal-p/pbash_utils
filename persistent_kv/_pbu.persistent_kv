@@ -1,184 +1,116 @@
-#!/usr/bin/env python3
+#!/usr/bin/env bash
 
-import fcntl
-import hashlib
-import os
-import pathlib
-import shutil
-import sys
-import typing
+set -eo pipefail
 
-PROG = '_pbu_persistent_kv'
+function echo_err() {
+  echo "$@" >&2
+}
 
-PBU_SUCCESS = 0
-PBU_ERROR = 1
-PBU_ERROR_USAGE = 2
-PBU_ERROR_NOT_FOUND = 40
+function usage() {
+  echo "Usage: $(basename "${0}") <subcommand> <namespace> <key>"
+  echo "Subcommands:"
+  echo "  list"
+  echo "  get"
+  echo "  set"
+  echo "  delete"
+  echo ""
+  echo "In set subcommand, stdin is used as the value"
+}
 
-_LOCK_DIR = '/tmp/pbu_persistent_kv_locks'
-_ROOT_DIR = pathlib.Path.home() / '.local' / 'share' / 'pcommand_utils_persistent_kv_data'
+PBU_SUCCESS=0
+PBU_ERROR=1
+PBU_ERROR_USAGE=2
+PBU_ERROR_NOT_FOUND=40
 
+ROOT_DIR="${HOME}/.local/share/pcommand_utils_persistent_kv_data"
+LOCK_DIR='/tmp/pbu_persistent_kv_locks'
 
-def list_items(namespace):
-  list_dir = _ROOT_DIR
-  if namespace is not None:
-    list_dir = list_dir / namespace
-  if not check_path_exists(list_dir):
-    return PBU_ERROR_NOT_FOUND
-  items = os.listdir(list_dir)
-  items.sort()
-  sys.stdout.write('\n'.join(items))
-  if items is not None and len(items) > 0:
-    sys.stdout.write('\n')
+[[ -d "${ROOT_DIR}" ]] || mkdir -p "${ROOT_DIR}" || exit
+[[ -d "${LOCK_DIR}" ]] || mkdir -p "${LOCK_DIR}" || exit
 
-def get_item(namespace, key):
-  key_file = _ROOT_DIR / namespace / key
-  if not check_path_exists(key_file):
-    return PBU_ERROR_NOT_FOUND
-  def read_data():
-    with open(key_file, 'rb') as f:
-      while True:
-        data = os.read(f.fileno(), 1024)
-        sys.stdout.buffer.write(data)
-        if not data:
-          break
-  def parent_dir_with_read_lock():
-    synchronize_file_operations(key_file, read_data, fcntl.LOCK_SH)
-  synchronize_file_operations(key_file.parent, parent_dir_with_read_lock, lock_type=fcntl.LOCK_SH)
+subcommand="$1"
+namespace="$2"
+key="$3"
 
-def set_item(namespace, key):
-  key_file = _ROOT_DIR / namespace / key
-  create_dir_if_not_exists(key_file.parent)
-  def write_data():
-    with open(key_file, 'ab') as f:
-      stream_stdin(f, True)
-  def parent_dir_with_read_lock():
-    synchronize_file_operations(key_file, write_data, fcntl.LOCK_EX)
-  synchronize_file_operations(key_file.parent, parent_dir_with_read_lock, lock_type=fcntl.LOCK_SH)
+if [[ "${subcommand}" =~ ^get|set$ ]]; then
+  if [[ -z "${namespace}" || -z "${key}" ]]; then
+    echo_err "Namespace and key are required"
+    exit $PBU_ERROR_USAGE 
+  fi
+elif [[ "${subcommand}" == "delete" ]]; then
+  if [[ -z "${namespace}" ]]; then
+    echo_err "Namespace is required"
+    exit $PBU_ERROR_USAGE 
+  fi
+elif [[ "${subcommand}" != "list" ]]; then
+  echo_err "Unknown subcommand: ${subcommand}"
+  usage
+  exit $PBU_ERROR_USAGE
+fi
 
-def delete_item(namespace, key):
-  code = _delete_item(namespace, key)
-  if not is_success(code):
-    return code
-  namespace_dir = _ROOT_DIR / namespace
-  if check_path_exists(namespace_dir):
-    if len(os.listdir(namespace_dir)) == 0:
-      return _delete_item(namespace, None)
+if [[ -n "${namespace}" ]]; then
+  [[ "${#namespace}" -le 64 ]] || { echo_err "Invalid namespace: namespace should be at most 64 characters long"; exit $PBU_ERROR_USAGE; }
+  [[ "${namespace}" =~ ^[a-zA-Z0-9_-]+$ ]] || { echo_err "Invalid namespace: namespace should match regex ^[a-zA-Z0-9_-]+$"; exit $PBU_ERROR_USAGE; }
+fi
+if [[ -n "${key}" ]]; then
+  [[ "${#key}" -le 64 ]] || { echo_err "Invalid key: key should be at most 64 characters long"; exit $PBU_ERROR_USAGE; }
+  [[ "${key}" =~ ^[a-zA-Z0-9_-]+$ ]] || { echo_err "Invalid key: key should match regex ^[a-zA-Z0-9_-]+$"; exit $PBU_ERROR_USAGE; }
+fi
 
-def _delete_item(namespace, key):
-  path = _ROOT_DIR / namespace
-  if key:
-    path = path / key
-  if not check_path_exists(path):
-    return PBU_ERROR_NOT_FOUND
-  remove_func = lambda: os.remove(path)
-  if os.path.isdir(path):
-    remove_func = lambda: shutil.rmtree(path)
-  synchronize_file_operations(path, remove_func, fcntl.LOCK_EX)
+########## BEGIN list subcommand ##########
 
-def validate_args(subcommand, namespace, key):
-  if subcommand in ['get', 'set'] and (not namespace or not key):
-    sys.stderr.write('Namespace and key are required\n')
-    usage()
-    return PBU_ERROR_USAGE
-  if subcommand == 'delete' and not namespace:
-    sys.stderr.write('Namespace is required\n')
-    usage()
-    return PBU_ERROR_USAGE
+if [[ "${subcommand}" == "list" ]]; then
+  ls "${ROOT_DIR}" > /dev/null 2>&1 || exit $PBU_ERROR
+  items=()
+  for x in $(ls -1 --color=never "${ROOT_DIR}" || exit $PBU_ERROR); do
+    IFS='.' read -r n k <<< "${x}"
+    if [[ -z "${namespace}" ]]; then
+      items+=("${n}")
+    elif [[ "${n}" == "${namespace}" ]]; then
+      items+=("${k}")
+    fi
+  done
+  if [[ ${#items[@]} -eq 0 ]]; then
+    [[ -z "${namespace}" ]] || exit $PBU_ERROR_NOT_FOUND
+  else
+    printf '%s\n' "${items[@]}" | sort -u
+  fi
+  exit $?
+fi
+########## END list subcommand ##########
 
-def stream_stdin(file: typing.IO, erase_file_before_write=False):
-  while True:
-    data = b''
-    if not sys.stdin.isatty():
-      data = os.read(sys.stdin.fileno(), 1024)
-    else:
-      data = sys.stdin.readline().encode()
-    if erase_file_before_write:
-      file.truncate(0)
-      erase_file_before_write = False
-    file.write(data)
-    if not data:
-      break
+lock_cmd="flock"
+pbu.is_macos && lock_cmd="lockf"
 
-def synchronize_file_operations(lock_path: typing.Union[str, pathlib.Path], callback, lock_type = fcntl.LOCK_EX):
-  if isinstance(lock_path, str):
-    lock_path = pathlib.Path(lock_path)
-  if not isinstance(lock_path, pathlib.Path):
-    raise ValueError('lock_path must be a string or pathlib.Path')
-  create_dir_if_not_exists(_LOCK_DIR)
-  path_hash = hashlib.sha256(str(pathlib.Path(lock_path).resolve().absolute()).rstrip('/').encode()).hexdigest()
+key_lock_path=""
+[[ -n "${namespace}" ]] && [[ -n "${key}" ]] && key_lock_path="${LOCK_DIR}/${namespace}.${key}.lock"
+[[ -z "${key_lock_path}" ]] || touch "${key_lock_path}" || exit
 
-  lock_file = '{}/{}.lock'.format(_LOCK_DIR, path_hash)
-  with open(lock_file, 'w+') as f:
-    fcntl.lockf(f.fileno(), lock_type)
-    try:
-      callback()
-    finally:
-      fcntl.lockf(f.fileno(), fcntl.LOCK_UN)
+key_file="${ROOT_DIR}/${namespace}.${key}"
 
-def create_dir_if_not_exists(dir_path):
-  os.makedirs(dir_path, exist_ok=True)
+########## BEGIN get subcommand ##########
+if [[ "${subcommand}" == "get" ]]; then
+  [ -f "${key_file}" ] || exit $PBU_ERROR_NOT_FOUND
+  ${lock_cmd} "${key_lock_path}" cat "${key_file}"
+  exit $?
+fi
+########## END get subcommand ##########
 
-def check_path_exists(path):
-  return os.path.exists(path)
+########## BEGIN set subcommand ##########
+if [[ "${subcommand}" == "set" ]]; then
+  ${lock_cmd} "${key_lock_path}" cat - > "${key_file}" 
+  exit $?
+fi
+########## END set subcommand ##########
 
-def is_success(code):
-  return code is None or code == PBU_SUCCESS
-
-def usage():
-  sys.stderr.write('''
-{} <subcommand> <namespace> <key>
-
-subcommands:
-  list
-  get
-  set
-  delete
-'''.format(PROG))
-
-def main():
-  global PROG
-  create_dir_if_not_exists(_ROOT_DIR)
-  PROG = os.path.basename(sys.argv[0])
-  args = sys.argv[1:]
-  subcommand = args[0] if len(args) > 0 else None
-  namespace = args[1] if len(args) > 1 else None
-  key = args[2] if len(args) > 2 else None
-
-  code = PBU_ERROR
-
-  code = validate_args(subcommand, namespace, key)
-  if not is_success(code):
-    return code
-
-  if subcommand == 'list':
-    code = list_items(namespace)
-  elif subcommand == 'delete':
-    code = delete_item(namespace, key)
-  elif subcommand == 'get':
-    code = get_item(namespace, key)
-  elif subcommand == 'set':
-    code = set_item(namespace, key)
-  else:
-    sys.stderr.write(f'Unknown subcommand: {subcommand}\n')
-    usage()
-    code = PBU_ERROR_USAGE
-  return code
-
-def custom_unraisable_hook(unraisable):
-    if unraisable.err_msg == "Exception ignored on flushing sys.stdout":
-        return
-    sys.__unraisablehook__(unraisable)
-
-sys.unraisablehook = custom_unraisable_hook
-
-if __name__ == '__main__':
-  try:
-    code = main()
-    sys.exit(code if code is not None else PBU_SUCCESS)
-  except KeyboardInterrupt:
-    sys.exit(PBU_ERROR)
-  except BrokenPipeError:
-    devnull = open(os.devnull, 'w')
-    os.dup2(devnull.fileno(), sys.stdout.fileno())
-    devnull.close()
+########## BEGIN delete subcommand ##########
+if [[ "${subcommand}" == "delete" ]]; then
+  if [[ -n "${key}" ]]; then
+    ${lock_cmd} "${key_lock_path}" rm "${key_file}" > /dev/null 2>&1
+  else
+    _pbu.persistent_kv list "${namespace}" | while read -r k; do
+      _pbu.persistent_kv delete "${namespace}" "${k}"
+    done
+  fi
+fi
+########## END delete subcommand ##########
