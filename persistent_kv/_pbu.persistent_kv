@@ -80,7 +80,7 @@ fi
 ########## END list subcommand ##########
 
 lock_cmd="flock"
-pbu.is_macos && lock_cmd="lockf"
+pbu.is_macos && lock_cmd="lockf -k"
 
 key_lock_path=""
 [[ -n "${namespace}" ]] && [[ -n "${key}" ]] && key_lock_path="${LOCK_DIR}/${namespace}.${key}.lock"
