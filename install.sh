@@ -9,7 +9,7 @@ fi
 IFS=' ' read -r _ python_version <<< $(python3 -V)
 IFS='.' read -r python_version_major python_version_minor python_version_patch <<< $python_version
 
-if [[ "${python_version_major}" -lt 3 || "${python_version_minor}" -lt 11 ]]
+if [[ "${python_version_major}" -lt 3 || ("${python_version_major}" -eq 3 && "${python_version_minor}" -lt 11) ]]
 then
   echo 'python version 3.11 or higher is required for pbash_utils'
   return
@@ -45,7 +45,7 @@ install=(
 "__exported_aliases__"
 )
 
-echo '#!/usr/bin/env bash' > /tmp/_pbu.completes.sh
+echo '#!/usr/bin/env bash' > /tmp/_pbu.completes.bash
 
 for x in "${install[@]}"
 do
@@ -58,8 +58,8 @@ do
     bash pbu_install/pbu.install --file "$p" || exit
   done
   [ -f "./$x/_complete.sh" ] && {
-    cat ./$x/_complete.sh | grep -v ^#.*$ >> /tmp/_pbu.completes.sh
+    cat ./$x/_complete.sh | grep -v ^#.*$ >> /tmp/_pbu.completes.bash
   }
 done
-bash pbu_install/pbu.install --file /tmp/_pbu.completes.sh || exit
+bash pbu_install/pbu.install --file /tmp/_pbu.completes.bash || exit
 exit 0
