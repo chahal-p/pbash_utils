@@ -1,27 +1,32 @@
 #!/usr/bin/env bash
 
-max_index_str_size=5 # for Index header
+parsed=$(pflags parse --name "$(basename "$0")" ---- \
+  -l shell_type -t string --allowed bash --allowed zsh --default bash --default zsh ---- "${@}") || exit
+pflags printhelp "$parsed" && exit
+readarray -t shell_type <<< $(pflags get --name shell_type "$parsed")
 
-readarray -t names < <(_pbu.persistent_kv list _pbu_persistent_source_data)
+max_index_str_size=5 # for Index header
 
 index_names=()
 
-for name in "${names[@]}"; do
-  index="$(_pbu.persistent_kv get _pbu_persistent_source_index "$name")"
-  size="${#index}"
-  [[ "$index" == 2147483647 ]] && size=1
-  max_index_str_size="$((${size} > max_index_str_size ? ${size} : max_index_str_size))"
-
-  index_names+=("$index:$name")
+for sht in "${shell_type[@]}"; do
+  readarray -t names < <(_pbu.persistent_kv list _pbu_persistent_source_data_${sht})
+  for name in "${names[@]}"; do
+    index="$(_pbu.persistent_kv get _pbu_persistent_source_index_${sht} "$name")"
+    size="${#index}"
+    [[ "$index" == 2147483647 ]] && size=1
+    max_index_str_size="$((${size} > max_index_str_size ? ${size} : max_index_str_size))"
+    index_names+=("$sht:$index:$name")
+  done
 done
 
-IFS=$'\n' sorted_array=($(printf "%s\n" "${index_names[@]}" | sort -t: -k1n,1n -k2,2))
+IFS=$'\n' sorted_array=($(printf "%s\n" "${index_names[@]}" | sort -t: -k1,1 -k2n,2n -k3,3))
 
 header_printed=false
 for index_name in "${sorted_array[@]}"; do
-  IFS=':' read -r index name <<< "$index_name"
-  [ "$header_printed" = false ] && printf '%*s  %s\n' "$max_index_str_size" 'Index' 'Name' && printf '%*s  %s\n' "$max_index_str_size" '-----' '----' && header_printed=true
+  IFS=':' read -r sh index name <<< "$index_name"
+  [ "$header_printed" = false ] && printf '%*s  %*s  %s\n' "$max_index_str_size" 'Index' 10 'Shell Type' 'Name' && printf '%*s  %*s  %s\n' "$max_index_str_size" '-----' 10 '----------' '----' && header_printed=true
   [ -z "$name" ] && continue
   [[ "$index" == 2147483647 ]] && index='-'
-  printf '%*s  %s\n' "$max_index_str_size" "$index" "$name"
+  printf '%*s  %*s  %s\n' "$max_index_str_size" "$index" 10 "$sh" "$name"
 done

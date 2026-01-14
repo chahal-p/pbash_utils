@@ -3,9 +3,12 @@
 data_file="$HOME/.local/share/pbu_sourceable_data"
 [ -f "$data_file" ] || exit
 
-parsed=$(pflags parse --name "$(basename "$0")"  ---- -s n -l name -t string -r --regex "^[a-zA-Z0-9_-]+$" ---- "${@}") || exit
+parsed=$(pflags parse --name "$(basename "$0")" ---- \
+  -s n -l name -t string -r --regex "^[a-zA-Z0-9_-]+$" -- \
+  -l shell_type -t string -r --allowed bash --allowed zsh ---- "${@}") || exit
 pflags printhelp "$parsed" && exit
 name="$(pflags get --name name "$parsed")"
+shell_type="$(pflags get --name shell_type "$parsed")"
 
-_pbu.persistent_kv delete _pbu_persistent_source_data "$name"
-_pbu.persistent_kv delete _pbu_persistent_source_index "$name"
+_pbu.persistent_kv delete "_pbu_persistent_source_data_${shell_type}" "$name"
+_pbu.persistent_kv delete "_pbu_persistent_source_index_${shell_type}" "$name"

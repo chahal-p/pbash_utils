@@ -11,8 +11,11 @@
   1. ```sh
      ./install.sh
      ```
-  1. Add below to .bashrc
+  1. For bash, add below to .bashrc
      ```
-     [[ ":$PATH:" == *":$HOME/.local/bin:"* ]] || export PATH="$PATH:$HOME/.local/bin"
-     source pbu_init.bash
+     source "$HOME/.local/bin/pbu_init.bash"
+     ```
+     For zsh, add below to .zshrc
+     ```
+     source "$HOME/.local/bin/pbu_init.zsh"
      ```

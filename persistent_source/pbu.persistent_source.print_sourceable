@@ -1,23 +1,8 @@
 #!/usr/bin/env bash
 
-readarray -t names < <(_pbu.persistent_kv list _pbu_persistent_source_data)
+parsed=$(pflags parse --name "$(basename "$0")" ---- \
+  -l shell_type -t string -r --allowed bash --allowed zsh ---- "${@}") || exit
+pflags printhelp "$parsed" && exit
+shell_type="$(pflags get --name shell_type "$parsed")"
 
-index_names=()
-
-for name in "${names[@]}"; do
-  index="$(_pbu.persistent_kv get _pbu_persistent_source_index "$name")"
-  size="${#index}"
-  [[ "$index" == 2147483647 ]] && size=1
-  max_index_str_size="$((${size} > max_index_str_size ? ${size} : max_index_str_size))"
-
-  index_names+=("$index:$name")
-done
-
-IFS=$'\n' sorted_array=($(printf "%s\n" "${index_names[@]}" | sort -t: -k1n,1n -k2,2))
-
-for index_name in "${sorted_array[@]}"; do
-  IFS=':' read -r index name <<< "$index_name"
-  echo "# Script from: $name"
-  _pbu.persistent_kv get _pbu_persistent_source_data "$name"
-  echo ""
-done
+_pbu.persistent_source_print_sourceable "$shell_type"

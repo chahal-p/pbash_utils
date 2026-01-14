@@ -4,11 +4,16 @@
 data_file="$HOME/.local/share/pbu_sourceable_data"
 [ -f "$data_file" ] || touch "$data_file"
 
-parsed=$(pflags parse --name "$(basename "$0")"  ---- -s f -l file -t string -r -- -s n -l name -t string -r --regex "^[a-zA-Z0-9_-]+$" -- -s i -l index -t number --default "" ---- "${@}") || exit
+parsed=$(pflags parse --name "$(basename "$0")" ---- \
+  -s f -l file -t string -r -- \
+  -s n -l name -t string -r --regex "^[a-zA-Z0-9_-]+$" -- \
+  -s i -l index -t number --default "" -- \
+  -l shell_type -t string -r --allowed bash --allowed zsh ---- "${@}") || exit
 pflags printhelp "$parsed" && exit
 name="$(pflags get --name name "$parsed")"
 file="$(pflags get --name file "$parsed")"
 index="$(pflags get --name index "$parsed")"
+shell_type="$(pflags get --name shell_type "$parsed")"
 
 if [ ! -z "$index" ] && ( [ "$index" -lt 0 ] || [ "$index" -gt 2147483646 ] ); then
   echo "Index must be between 0 and 2147483646" >&2
@@ -17,5 +22,5 @@ fi
 
 [ -z "$index" ] && index=2147483647
 
-echo $index | _pbu.persistent_kv set _pbu_persistent_source_index "$name"
-cat "$file" | _pbu.persistent_kv set _pbu_persistent_source_data "$name"
+echo -n "$index" | _pbu.persistent_kv set "_pbu_persistent_source_index_${shell_type}" "$name"
+cat "$file" | _pbu.persistent_kv set "_pbu_persistent_source_data_${shell_type}" "$name"

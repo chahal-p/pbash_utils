@@ -1,10 +1,4 @@
-#!/usr/bin/env bash
-
-if [[ "${BASH_VERSINFO[0]}" -lt 5 ]]
-then
-  echo 'bash version 5 or higher is required for pbash_utils'
-  return
-fi
+#!/usr/bin/env zsh
 
 IFS=' ' read -r _ python_version <<< $(python3 -V)
 IFS='.' read -r python_version_major python_version_minor python_version_patch <<< $python_version
@@ -19,12 +13,14 @@ function pbu.pathadd() {
   [[ ":$PATH:" == *":$1:"* ]] || export PATH="$1:$PATH"
 }
 
-if [ -f "$HOME/.bashrc" ]
+pbu.pathadd "${HOME}/.local/bin"
+
+if [ -f "$HOME/.zshrc" ]
 then
-  function pbu.reload-bashrc() {
-    source "$HOME/.bashrc"
+  function pbu.reload-zshrc() {
+    source "$HOME/.zshrc"
   }
-  alias reload-bashrc='pbu.reload-bashrc'
+  alias reload-zshrc='pbu.reload-zshrc'
 fi
 
 function pbu.quiet_source() {
@@ -32,11 +28,9 @@ function pbu.quiet_source() {
   source "$1"
 }
 
-pbu.quiet_source _pbu.completes.bash
-
 function pbu.python.venv-activate() {
   test -d ~/.python-venv || { echo 'Creating new venv'; pbu.python -m venv ~/.python-venv;}
   source ~/.python-venv/bin/activate
 }
 
-source <(_pbu.persistent_source_print_sourceable bash)
+source <(_pbu.persistent_source_print_sourceable zsh)
