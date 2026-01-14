@@ -19,6 +19,8 @@ function pbu.pathadd() {
   [[ ":$PATH:" == *":$1:"* ]] || export PATH="$1:$PATH"
 }
 
+pbu.pathadd "${HOME}/.local/bin"
+
 if [ -f "$HOME/.bashrc" ]
 then
   function pbu.reload-bashrc() {
