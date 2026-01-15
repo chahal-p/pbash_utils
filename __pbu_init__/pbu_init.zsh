@@ -33,4 +33,4 @@ function pbu.python.venv-activate() {
   source ~/.python-venv/bin/activate
 }
 
-source <(_pbu.persistent_source_print_sourceable zsh)
+source <(pbu.persistent_source.print_sourceable --shell_type zsh)
