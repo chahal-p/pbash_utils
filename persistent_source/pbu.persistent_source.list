@@ -13,7 +13,7 @@ while [[ $# -gt 0 ]]; do
       printf '%s' "$2"
       exit 0
       ;;
-    --shell-type)
+    --shell_type)
       shell_type+=("$2")
       shift 2
       ;;

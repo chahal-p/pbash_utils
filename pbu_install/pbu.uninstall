@@ -9,17 +9,15 @@ parsed=$(pflags parse --name "$0" ---- -l name -t string -r -h "Name of command"
 eval set -- "$parsed"
 
 while [[ $# -gt 0 ]]; do
+  [[ "$1" == "--" ]] && { shift; break; }
   case $1 in
     --help)
       printf '%s' "$2"
       exit 0
       ;;
-    --name)
-      name="$2"
-      shift 2
-      ;;
     *)
-      break
+      eval "${1##*-}='${2//\'/\'\\\'\'}'"
+      shift 2
       ;;
   esac
 done

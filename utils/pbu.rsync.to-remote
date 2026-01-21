@@ -9,25 +9,15 @@ parsed=$(pflags parse --name "$(basename "$0")" --description "Watch the source 
 eval set -- "$parsed"
 
 while [[ $# -gt 0 ]]; do
+  [[ "$1" == "--" ]] && { shift; break; }
   case $1 in
     --help)
       printf '%s' "$2"
       exit 0
       ;;
-    --host)
-      host="$2"
-      shift 2
-      ;;
-    --source)
-      source="$2"
-      shift 2
-      ;;
-    --destination)
-      destination="$2"
-      shift 2
-      ;;
     *)
-      break
+      eval "${1##*-}='${2//\'/\'\\\'\'}'"
+      shift 2
       ;;
   esac
 done
