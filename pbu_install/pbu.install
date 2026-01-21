@@ -14,12 +14,36 @@ parsed=$(pflags parse --name "$(basename "$0")" \
     -- -l file -t string --default '' --help "Path of file being installed" \
     -- -l quiet -t bool --help "Stop printing installation logs" \
   ---- "$@") || exit $?
-pflags printhelp $parsed && exit
 
-name=$(pflags get -n name "$parsed" ) || exit $?
-content=$(pflags get -n content "$parsed" ) || exit $?
-file=$(pflags get -n file "$parsed" ) || exit $?
-quiet=$(pflags get -n quiet "$parsed" ) || exit $?
+eval set -- "$parsed"
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --help)
+      printf '%s' "$2"
+      exit 0
+      ;;
+    --name)
+      name="$2"
+      shift 2
+      ;;
+    --content)
+      content="$2"
+      shift 2
+      ;;
+    --file)
+      file="$2"
+      shift 2
+      ;;
+    --quiet)
+      quiet="$2"
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
 
 [ "$name" == "" ] && [ "$content" == "" ] && [ "$file" == "" ] && { error_echo "No argument provided."; exit 1; }
 [ ! "$content" == "" ] && [ ! "$file" == "" ] && { error_echo "Only one of --content or --file is expected."; exit 1; }

@@ -2,9 +2,26 @@
 
 parsed=$(pflags parse --name pbu.vars.delete ---- \
   -l var -t string -r -h 'Name of var' ---- "$@") || exit
-pflags printhelp "$parsed" && exit
 
-readarray -t vars <<< "$(pflags get --name var "$parsed")"
+eval set -- "$parsed"
+
+vars=()
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --help)
+      printf '%s' "$2"
+      exit 0
+      ;;
+    --var)
+      vars+=("$2")
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
 
 for var in ${vars[@]}; do
   pbu.uninstall --name "${var}"

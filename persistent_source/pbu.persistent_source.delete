@@ -6,9 +6,28 @@ data_file="$HOME/.local/share/pbu_sourceable_data"
 parsed=$(pflags parse --name "$(basename "$0")" ---- \
   -s n -l name -t string -r --regex "^[a-zA-Z0-9_-]+$" -- \
   -l shell_type -t string -r --allowed bash --allowed zsh ---- "${@}") || exit
-pflags printhelp "$parsed" && exit
-name="$(pflags get --name name "$parsed")"
-shell_type="$(pflags get --name shell_type "$parsed")"
+
+eval set -- "$parsed"
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --help)
+      printf '%s' "$2"
+      exit 0
+      ;;
+    --name)
+      name="$2"
+      shift 2
+      ;;
+    --shell-type)
+      shell_type="$2"
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
 
 _pbu.persistent_kv delete "_pbu_persistent_source_data_${shell_type}" "$name"
 _pbu.persistent_kv delete "_pbu_persistent_source_index_${shell_type}" "$name"

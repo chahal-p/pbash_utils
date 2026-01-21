@@ -6,10 +6,30 @@ parsed=$(pflags parse --name "$(basename "$0")" --description "Watch the source 
     -- -l destination -t string --required -h "Destination directory or file" \
   ---- "$@") || exit 1
 
-pflags printhelp "$parsed" && exit
+eval set -- "$parsed"
 
-host="$(pflags get -n host "$parsed")" || exit
-source="$(pflags get -n source "$parsed")" || exit
-destination="$(pflags get -n destination "$parsed")" || exit
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --help)
+      printf '%s' "$2"
+      exit 0
+      ;;
+    --host)
+      host="$2"
+      shift 2
+      ;;
+    --source)
+      source="$2"
+      shift 2
+      ;;
+    --destination)
+      destination="$2"
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
 
 watchexec -w "$source" rsync -azv --delete "$source" "$host:$destination"

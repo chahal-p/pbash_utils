@@ -12,10 +12,26 @@ while [[ "${#}" -gt "0" ]]; do
 done
 
 parsed=$(pflags parse --name "$0" --usage 'pbu.lock -f  -t  [-h] -- <command>' ---- -s f -l file --type string -r -- -s t -l timeout -t number -r ---- "${internal_args[@]}") || exit
-pflags printhelp $parsed && exit
 
-file="$(pflags get --name file "$parsed")" || exit
-timeout="$(pflags get --name timeout "$parsed")" || exit
+eval "PARSED_INTERNAL_ARGS=( $parsed )"
+
+for (( i=0; i<${#PARSED_INTERNAL_ARGS[@]}; i+=2 )); do
+  case "${PARSED_INTERNAL_ARGS[i]}" in
+    --help)
+      printf '%s' "${PARSED_INTERNAL_ARGS[i+1]}"
+      exit 0
+      ;;
+    --file)
+      file="${PARSED_INTERNAL_ARGS[i+1]}"
+      ;;
+    --timeout)
+      timeout="${PARSED_INTERNAL_ARGS[i+1]}"
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
 
 if [[ "${#}" -eq "0" ]]; then
   pbu.errors.echo "No command provided"

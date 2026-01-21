@@ -1,7 +1,20 @@
 #!/usr/bin/env bash
 
 parsed=$(pflags parse --name "$(basename "$0")" --description "Install useful aliases of commands without pbu namespace" ---- ---- "$@") || exit
-pflags printhelp $parsed && exit
+
+eval set -- "$parsed"
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --help)
+      printf '%s' "$2"
+      exit 0
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
 
 pbu.install_alias bin-to-hex=pbu.bin-to-hex
 

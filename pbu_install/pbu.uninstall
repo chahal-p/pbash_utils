@@ -5,9 +5,24 @@ function error_echo() {
 }
 
 parsed=$(pflags parse --name "$0" ---- -l name -t string -r -h "Name of command" ---- "$@") || exit
-pflags printhelp "$parsed" && exit
 
-name="$(pflags get --name name "$parsed")" || exit
+eval set -- "$parsed"
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --help)
+      printf '%s' "$2"
+      exit 0
+      ;;
+    --name)
+      name="$2"
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
 
 installation_path="$HOME/.local/bin/"
 [ -d $HOME/.local/bin ] || { error_echo "Uninstallation failed"; exit 1; }
