@@ -5,5 +5,5 @@ readarray -t vars < <(_pbu.persistent_kv list _pbu_vars)
 for var in "${vars[@]}"; do
   value="$(_pbu.persistent_kv get _pbu_vars "${var}")"
   # [ -z "$value" ] || { (echo "${value}" | base64 -d | head -c 10 | file -i - | grep -q "charset=binary") && continue; }
-  printf "export %s='%s';\n" "${var}" "${value}"
+  printf "export %s=%s;\n" "${var}" "$(pbu.string.quoted "${value}")"
 done
